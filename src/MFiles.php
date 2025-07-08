@@ -2,7 +2,4 @@
 
 namespace CodebarAg\MFiles;
 
-class MFiles
-{
-
-}
+class MFiles {}
