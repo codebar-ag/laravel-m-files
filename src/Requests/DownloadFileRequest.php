@@ -9,7 +9,6 @@ use CodebarAg\MFiles\Responses\DownloadFileResponse;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 
-
 class DownloadFileRequest extends Request
 {
     protected Method $method = Method::GET;
@@ -53,4 +52,4 @@ class DownloadFileRequest extends Request
     {
         return DownloadFileResponse::createDtoFromResponse($response);
     }
-} 
+}

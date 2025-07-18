@@ -40,7 +40,7 @@ final class Document
 
         $objVerType = Arr::get($data, 'ObjVer.Type');
         $objVerVersion = Arr::get($data, 'ObjVer.Version');
-        
+
         return new self(
             id: Arr::get($data, 'ObjVer.ID') ?: Arr::get($data, 'ID'),
             title: Arr::get($data, 'Title'),

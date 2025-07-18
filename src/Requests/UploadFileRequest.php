@@ -10,7 +10,6 @@ use Saloon\Enums\Method;
 use Saloon\Http\Request;
 use Saloon\Traits\Body\HasMultipartBody;
 
-
 class UploadFileRequest extends Request implements HasBody
 {
     use HasMultipartBody;

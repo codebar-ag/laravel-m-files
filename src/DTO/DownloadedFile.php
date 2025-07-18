@@ -43,4 +43,4 @@ final class DownloadedFile
             'contentType' => $this->contentType,
         ];
     }
-} 
+}

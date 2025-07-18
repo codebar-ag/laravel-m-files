@@ -20,6 +20,7 @@ class GetAuthenticationToken extends SoloRequest implements HasBody
     use HasJsonBody;
 
     protected Method $method = Method::POST;
+
     private string $sessionId;
 
     public function __construct(
