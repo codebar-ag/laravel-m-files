@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 use CodebarAg\MFiles\Connectors\MFilesConnector;
 use CodebarAg\MFiles\DTO\Config\ConfigWithCredentials;
-use CodebarAg\MFiles\DTO\DocumentProperties;
-use CodebarAg\MFiles\DTO\Property;
 use CodebarAg\MFiles\Fixtures\AuthenticationTokenFixture;
-use CodebarAg\MFiles\Fixtures\DocumentsFixture;
 use CodebarAg\MFiles\Fixtures\DocumentPropertiesFixture;
+use CodebarAg\MFiles\Fixtures\DocumentsFixture;
 use CodebarAg\MFiles\Requests\Authentication\GetAuthenticationToken;
-use CodebarAg\MFiles\Requests\GetDocumentsRequest;
 use CodebarAg\MFiles\Requests\GetDocumentPropertiesRequest;
+use CodebarAg\MFiles\Requests\GetDocumentsRequest;
 use Saloon\Laravel\Facades\Saloon;
 
 test('can get document properties using document id from documents list', function () {
@@ -25,19 +23,19 @@ test('can get document properties using document id from documents list', functi
     $connector = new MFilesConnector($config);
 
     $documents = $connector->send(new GetDocumentsRequest)->dto();
-    
+
     expect($documents)->toBeInstanceOf(\CodebarAg\MFiles\DTO\Documents::class);
     expect($documents->count())->toBe(2);
-    
+
     $firstDocument = $documents->items->firstWhere('propertyID', 0);
     expect($firstDocument)->not->toBeNull();
-    
+
     $documentId = $firstDocument->id;
     expect($documentId)->not->toBeNull();
-    
+
     $request = new GetDocumentPropertiesRequest($documentId);
     expect($request->objectId)->toBe($documentId);
-    
+
     $response = $connector->send($request);
     expect($response->status())->toBe(404);
 });
@@ -61,11 +59,11 @@ test('can get document properties with filtering parameters using document id', 
         objectTypeId: 0,
         includeDeleted: false
     );
-    
+
     expect($request->objectId)->toBe($documentId);
     expect($request->objectTypeId)->toBe(0);
     expect($request->includeDeleted)->toBeFalse();
-    
+
     $response = $connector->send($request);
     expect($response->status())->toBe(404);
 });
@@ -80,18 +78,18 @@ test('can access document metadata from documents list', function () {
     $connector = new MFilesConnector($config);
 
     $documents = $connector->send(new GetDocumentsRequest)->dto();
-    
+
     $firstDocument = $documents->items->firstWhere('propertyID', 0);
-    
+
     $propertyIDs = $documents->items->pluck('propertyID')->unique()->values();
-    
+
     expect($firstDocument->id)->not->toBeNull();
     expect($firstDocument->title)->not->toBeNull();
     expect($firstDocument->propertyID)->toBe(0);
     expect($firstDocument->version)->not->toBeNull();
     expect($firstDocument->isCheckedOut)->toBeFalse();
     expect($firstDocument->isDeleted)->toBeFalse();
-    
+
     expect($propertyIDs)->not->toBeEmpty();
 });
 
@@ -130,7 +128,7 @@ test('can create GetDocumentPropertiesRequest with document ID from documents li
     $documentId = $firstDocument->id;
 
     $request = new GetDocumentPropertiesRequest($documentId);
-    
+
     expect($request->objectId)->toBe($documentId);
     expect($request->objectTypeId)->toBeNull();
     expect($request->includeDeleted)->toBeNull();

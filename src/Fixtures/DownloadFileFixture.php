@@ -33,4 +33,4 @@ class DownloadFileFixture extends Fixture
             // '/[A-Za-z0-9_-]{100,}/' => 'REDACTED-AUTH-TOKEN',
         ];
     }
-} 
+}

@@ -24,8 +24,8 @@ test('session id in response matches the one sent in request', function () {
 
     expect($token)->toBeInstanceOf(AuthenticationToken::class);
     expect($token->sessionId)->not->toBeNull();
-    
+
     // The session ID should be the same as what was sent in the request
     // We can verify this by checking that it's a valid UUID format
     expect($token->sessionId)->toMatch('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i');
-}); 
+});
