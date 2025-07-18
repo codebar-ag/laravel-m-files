@@ -1,4 +1,4 @@
-<img src="https://banners.beyondco.de/Laravel%20DocuWare.png?theme=light&packageManager=composer+require&packageName=codebar-ag%2Flaravel-m-files&pattern=circuitBoard&style=style_1&description=An+opinionated+way+to+integrate+M-Files+with+Laravel&md=1&showWatermark=0&fontSize=175px&images=document-report">
+<img src="https://banners.beyondco.de/Laravel%20M-Files.png?theme=light&packageManager=composer+require&packageName=codebar-ag%2Flaravel-m-files&pattern=circuitBoard&style=style_1&description=An+opinionated+way+to+integrate+M-Files+with+Laravel&md=1&showWatermark=0&fontSize=175px&images=document-report" alt="Laravel M-Files banner with description and logo">
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/codebar-ag/laravel-m-files.svg?style=flat-square)](https://packagist.org/packages/codebar-ag/laravel-m-files)
 [![GitHub-Tests](https://github.com/codebar-ag/laravel-m-files/actions/workflows/run-tests.yml/badge.svg?branch=main)](https://github.com/codebar-ag/laravel-m-files/actions/workflows/run-tests.yml)
@@ -37,69 +37,6 @@ M_FILES_VAULT_GUID=ABC0DE2G-3HW-QWCQ-SDF3-WERWETWETW
 M_FILES_CACHE_DRIVER=file
 ```
 
-## Usage
-
-### Basic Usage with Saloon
-
-```php
-use CodebarAg\MFiles\Connectors\MFilesConnector;
-use CodebarAg\MFiles\DTO\Config\ConfigWithCredentials;
-use CodebarAg\MFiles\DTO\Authentication\AuthenticationToken;
-use CodebarAg\MFiles\Requests\GetCurrentUserRequest;
-use CodebarAg\MFiles\Requests\GetDocumentsRequest;
-use CodebarAg\MFiles\Requests\CreateSingleFileDocumentRequest;
-use CodebarAg\MFiles\Requests\UploadFileRequest;
-use CodebarAg\MFiles\Requests\DownloadFileRequest;
-use CodebarAg\MFiles\DTO\PropertyValue;
-use CodebarAg\MFiles\Enums\MFDataTypeEnum;
-use Illuminate\Support\Arr;
-
-$config = new ConfigWithCredentials(
-    url: 'https://your-mfiles-server.com',
-    username: 'your-username',
-    password: 'your-password',
-    identifier: 'default',
-    cacheDriver: 'file',
-    requestTimeoutInSeconds: 15,
-    vaultGuid: 'ABC0DE2G-3HW-QWCQ-SDF3-WERWETWETW',
-    authenticationToken: $authenticationToken // ptional to handle authenication manually, leave null to use automatic token management based on url/username/password
-);
-
-// Create connector
-$connector = new MFilesConnector($config);
-
-// Make requests
-$user = $connector->send(new GetCurrentUserRequest())->dto();
-$documents = $connector->send(new GetDocumentsRequest())->dto();
-
-// Upload a file first
-$uploadedFile = $connector->send(new UploadFileRequest(
-    fileContent: $fileContent,
-    fileName: 'document.pdf'
-))->dto();
-
-// Create a single file document
-$document = $connector->send(new CreateSingleFileDocumentRequest(
-    title: 'My Document',
-    file: $uploadedFile,
-    propertyValues: [ // optional
-        new PropertyValue(0, MFDataTypeEnum::TEXT, 'Custom Title'),
-        new PropertyValue(5, MFDataTypeEnum::DATE, '2024-01-01'),
-    ]
-))->dto();
-
-$documents = $connector->send(new GetDocumentsRequest())->dto();
-$document = $documents->first();
-$file = $document->files->first();
-
-$downloadedFile = $connector->send(new DownloadFileRequest(
-    objectId: $document->id,
-    fileId: $file->id
-))->dto();
-
-
-```
-
 ### Available Requests
 
 #### Authentication
@@ -118,6 +55,9 @@ $downloadedFile = $connector->send(new DownloadFileRequest(
 - `CreateSingleFileDocumentRequest` - Create a single file document
 - `DownloadFileRequest` - Download a file from M-Files
 
+### Available Enums
+- `MFDataTypeEnum` - Represents a data type in M-Files
+
 ### Available DTOs
 - `Property` - Represents a property in M-Files
 - `PropertyValue` - Represents a property value for creating documents
@@ -127,9 +67,240 @@ $downloadedFile = $connector->send(new DownloadFileRequest(
 - `DownloadedFile` - Represents a downloaded file with content and metadata
 - `User` - Represents a user in M-Files
 
+## Usage
 
-### Available Enums
-- `MFDataTypeEnum` - Represents a data type in M-Files
+### Basic Setup
+
+```php
+use CodebarAg\MFiles\Connectors\MFilesConnector;
+use CodebarAg\MFiles\DTO\Config\ConfigWithCredentials;
+
+$config = new ConfigWithCredentials();
+
+// or for multi tenant applications
+
+$config = new ConfigWithCredentials(
+    url: 'https://your-mfiles-server.com',
+    username: 'your-username',
+    password: 'your-password',
+    identifier: 'default',
+    cacheDriver: 'file',
+    requestTimeoutInSeconds: 15,
+    vaultGuid: 'ABC0DE2G-3HW-QWCQ-SDF3-WERWETWETW',
+    authenticationToken: null // Optional to handle authentication manually, leave null to use automatic token management
+);
+
+$connector = new MFilesConnector(config: $config);
+```
+
+> By default authentication is handled automatically, to disable this, pass `authenticationToken: null` to the ConfigWithCredentials dto.
+
+### Available Requests
+
+#### Authentication
+
+**Get Authentication Token**
+```php
+use CodebarAg\MFiles\Requests\Authentication\GetAuthenticationToken;
+use CodebarAg\MFiles\DTO\Authentication\AuthenticationToken;
+
+$request = new GetAuthenticationToken(
+    url: 'https://your-mfiles-server.com',
+    username: 'your-username',
+    password: 'your-password',
+    vaultGuid: 'ABC0DE2G-3HW-QWCQ-SDF3-WERWETWETW'
+);
+
+$token = $request->send()->dto();
+// Returns AuthenticationToken with sessionId
+```
+
+**Logout Session**
+```php
+use CodebarAg\MFiles\Requests\Authentication\LogoutSession;
+
+$logout = (new LogoutSession(config: $config))->send()->dto();
+// Returns true on successful logout, clears cached token
+```
+
+#### User Operations
+
+**Get Current User**
+```php
+use CodebarAg\MFiles\Requests\GetCurrentUserRequest;
+use CodebarAg\MFiles\DTO\User;
+
+$user = $connector->send(new GetCurrentUserRequest())->dto();
+// Returns User DTO with id, name, email, etc.
+```
+
+#### Document Operations
+
+**Get Documents**
+```php
+use CodebarAg\MFiles\Requests\GetDocumentsRequest;
+use CodebarAg\MFiles\DTO\Documents;
+
+$documents = $connector->send(new GetDocumentsRequest())->dto();
+// Returns Documents collection with pagination info
+
+// With filtering parameters
+$documents = $connector->send(new GetDocumentsRequest(
+    page: 1,
+    pageSize: 5,
+    searchString: 'Sample',
+    objectTypeId: 0,
+    includeDeleted: false,
+    includeSubfolders: true,
+    sortBy: 'Title',
+    sortDirection: 'asc'
+))->dto();
+```
+
+**Get Document Properties**
+```php
+use CodebarAg\MFiles\Requests\GetDocumentPropertiesRequest;
+use CodebarAg\MFiles\DTO\DocumentProperties;
+
+$properties = $connector->send(new GetDocumentPropertiesRequest(
+    objectId: 123
+))->dto();
+// Returns DocumentProperties with property details
+
+// With optional parameters
+$properties = $connector->send(new GetDocumentPropertiesRequest(
+    objectId: 123,
+    objectTypeId: 0,
+    includeDeleted: false
+))->dto();
+```
+
+#### File Operations
+
+**Upload File**
+```php
+use CodebarAg\MFiles\Requests\UploadFileRequest;
+
+$fileContent = file_get_contents('path/to/file.pdf');
+$fileName = 'document.pdf';
+
+$uploadedFile = $connector->send(new UploadFileRequest(
+    fileContent: $fileContent,
+    fileName: $fileName
+))->dto();
+// Returns array with file ID, title, extension
+```
+
+**Create Single File Document**
+```php
+use CodebarAg\MFiles\Requests\CreateSingleFileDocumentRequest;
+use CodebarAg\MFiles\DTO\PropertyValue;
+use CodebarAg\MFiles\Enums\MFDataTypeEnum;
+use CodebarAg\MFiles\DTO\Document;
+
+// First upload the file
+$uploadedFile = $connector->send(new UploadFileRequest(
+    fileContent: $fileContent,
+    fileName: 'document.pdf'
+))->dto();
+
+// Then create the document
+$document = $connector->send(new CreateSingleFileDocumentRequest(
+    title: 'My Document',
+    file: $uploadedFile
+))->dto();
+// Returns Document DTO with id, title, files, etc.
+
+// With custom property values
+$propertyValues = [
+    new PropertyValue(propertyDef: 0, dataType: MFDataTypeEnum::TEXT, value: 'Custom Title'),
+    new PropertyValue(propertyDef: 5, dataType: MFDataTypeEnum::DATE, value: '2024-01-01'),
+];
+
+$document = $connector->send(new CreateSingleFileDocumentRequest(
+    title: 'Custom Document',
+    file: $uploadedFile,
+    propertyValues: $propertyValues
+))->dto();
+```
+
+**Download File**
+```php
+use CodebarAg\MFiles\Requests\DownloadFileRequest;
+use CodebarAg\MFiles\DTO\DownloadedFile;
+
+$downloadedFile = $connector->send(new DownloadFileRequest(
+    objectId: 123,
+    fileId: 456
+))->dto();
+// Returns DownloadedFile with content, name, extension, size, contentType
+
+// With optional parameters
+$downloadedFile = $connector->send(new DownloadFileRequest(
+    objectId: 123,
+    fileId: 456,
+    objectTypeId: 0,
+    includeDeleted: false
+))->dto();
+```
+
+### Complete Workflow Example
+
+```php
+use CodebarAg\MFiles\Connectors\MFilesConnector;
+use CodebarAg\MFiles\DTO\Config\ConfigWithCredentials;
+use CodebarAg\MFiles\Requests\GetCurrentUserRequest;
+use CodebarAg\MFiles\Requests\GetDocumentsRequest;
+use CodebarAg\MFiles\Requests\CreateSingleFileDocumentRequest;
+use CodebarAg\MFiles\Requests\UploadFileRequest;
+use CodebarAg\MFiles\Requests\DownloadFileRequest;
+use CodebarAg\MFiles\DTO\PropertyValue;
+use CodebarAg\MFiles\Enums\MFDataTypeEnum;
+
+$config = new ConfigWithCredentials(
+    url: 'https://your-mfiles-server.com',
+    username: 'your-username',
+    password: 'your-password',
+    identifier: 'default',
+    cacheDriver: 'file',
+    requestTimeoutInSeconds: 15,
+    vaultGuid: 'ABC0DE2G-3HW-QWCQ-SDF3-WERWETWETW'
+);
+
+$connector = new MFilesConnector(config: $config);
+
+// Get current user
+$user = $connector->send(new GetCurrentUserRequest())->dto();
+
+// Get documents
+$documents = $connector->send(new GetDocumentsRequest())->dto();
+
+// Upload a file
+$fileContent = file_get_contents('document.pdf');
+$uploadedFile = $connector->send(new UploadFileRequest(
+    fileContent: $fileContent,
+    fileName: 'document.pdf'
+))->dto();
+
+// Create a document with the uploaded file
+$document = $connector->send(new CreateSingleFileDocumentRequest(
+    title: 'My Document',
+    file: $uploadedFile,
+    propertyValues: [
+        new PropertyValue(propertyDef: 0, dataType: MFDataTypeEnum::TEXT, value: 'Custom Title'),
+        new PropertyValue(propertyDef: 5, dataType: MFDataTypeEnum::DATE, value: '2024-01-01'),
+    ]
+))->dto();
+
+// Download a file from a document
+$file = $document->files->first();
+$downloadedFile = $connector->send(new DownloadFileRequest(
+    objectId: $document->id,
+    fileId: $file->id
+))->dto();
+
+
+```
 
 ## Authentication Token Management
 
