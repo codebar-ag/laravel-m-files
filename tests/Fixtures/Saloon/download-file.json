@@ -1,0 +1,11 @@
+{
+    "statusCode": 200,
+    "headers": {
+        "Content-Disposition": "attachment; filename=\"sample-document-1.pdf\"",
+        "Content-Length": "1024",
+        "Content-Type": "application/pdf",
+        "Last-Modified": "Tue, 15 Jul 2025 22:04:38 GMT"
+    },
+    "data": "This is the content of sample-document-1.pdf file from M-Files. It contains sample data for testing purposes.",
+    "context": []
+} 

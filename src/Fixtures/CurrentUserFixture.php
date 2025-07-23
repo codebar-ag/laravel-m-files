@@ -15,17 +15,25 @@ class CurrentUserFixture extends Fixture
 
     protected function defineSensitiveHeaders(): array
     {
+        if (!env('SALOON_FIXTURE_REDACTION', true)) {
+            return [];
+        }
+
         return [
-            // 'Set-Cookie' => 'REDACTED',
+            'Set-Cookie' => 'REDACTED',
         ];
     }
 
     protected function defineSensitiveJsonParameters(): array
     {
+        if (!env('SALOON_FIXTURE_REDACTION', true)) {
+            return [];
+        }
+
         return [
-            // 'AccountName' => 'redacted@example.com',
-            // 'SerialNumber' => 'REDACTED-SERIAL',
-            // 'FullName' => 'REDACTED USER',
+            'AccountName' => 'redacted@example.com',
+            'SerialNumber' => 'REDACTED-SERIAL',
+            'FullName' => 'REDACTED USER',
         ];
     }
 
