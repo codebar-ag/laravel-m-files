@@ -21,7 +21,7 @@ final class PropertyValue
     {
         $typedValue = Arr::get($data, 'TypedValue', []);
         $dataTypeId = Arr::get($typedValue, 'DataType', 0);
-        $dataType = MFDataTypeEnum::tryFrom($dataTypeId) ?? MFDataTypeEnum::Uninitialized;
+        $dataType = MFDataTypeEnum::tryFrom($dataTypeId) ?? MFDataTypeEnum::UNINITIALIZED;
 
         return new self(
             propertyDef: Arr::get($data, 'PropertyDef'),
