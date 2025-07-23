@@ -15,7 +15,7 @@ class LogoutSessionFixture extends Fixture
 
     protected function defineSensitiveHeaders(): array
     {
-        if (!env('SALOON_FIXTURE_REDACTION', true)) {
+        if (! env('SALOON_FIXTURE_REDACTION', true)) {
             return [];
         }
 
