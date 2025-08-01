@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace CodebarAg\MFiles\Connectors;
 
+use CodebarAg\MFiles\DTO\Authentication\AuthenticationToken;
 use CodebarAg\MFiles\DTO\Config\ConfigWithCredentials;
+use Saloon\Http\Auth\HeaderAuthenticator;
 use Saloon\Http\Connector;
 use Saloon\Traits\Plugins\AcceptsJson;
 
@@ -26,7 +28,13 @@ class MFilesConnector extends Connector
         return [
             'Accept' => 'application/json',
             'Content-Type' => 'application/json',
-            'X-Authentication' => $this->configuration->authenticationToken->value,
         ];
+    }
+
+    protected function defaultAuth(): HeaderAuthenticator
+    {
+        $token = AuthenticationToken::getOrCreate($this->configuration);
+
+        return new HeaderAuthenticator($token->value, 'X-Authentication');
     }
 }

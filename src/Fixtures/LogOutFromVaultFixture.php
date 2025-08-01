@@ -6,11 +6,11 @@ namespace CodebarAg\MFiles\Fixtures;
 
 use Saloon\Http\Faking\Fixture;
 
-class UploadFileFixture extends Fixture
+class LogOutFromVaultFixture extends Fixture
 {
     protected function defineName(): string
     {
-        return 'upload-file';
+        return 'logout-from-vault';
     }
 
     protected function defineSensitiveHeaders(): array

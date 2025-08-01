@@ -1,17 +1,18 @@
 {
-    "statusCode": 404,
+    "statusCode": 200,
     "headers": {
-        "Cache-Control": "private",
+        "Cache-Control": "private, must-revalidate, max-age=0",
         "Content-Type": "application\/json; charset=utf-8",
+        "Expires": "Wed, 31 Jul 2024 14:26:33 GMT",
         "X-Frame-Options": "SAMEORIGIN",
         "Content-Security-Policy": "default-src 'none'; object-src 'self'; script-src 'unsafe-inline' 'unsafe-eval' 'self' blob: https:\/\/js.monitor.azure.com; style-src 'unsafe-inline' 'self'; font-src 'self' data:; connect-src 'self' https:\/\/northeurope-0.in.applicationinsights.azure.com https:\/\/js.monitor.azure.com; img-src 'self' blob: data:; manifest-src 'self'; form-action 'self' javascript:; frame-src * blob:; frame-ancestors 'self';",
-        "Set-Cookie": "REDACTED",
+        "Set-Cookie": "ASP.NET_SessionId=z3xr4bhm3gy4wktah5n3g3xq; path=\/; secure; HttpOnly; SameSite=Lax",
         "X-XSS-Protection": "1; mode=block",
         "X-Content-Type-Options": "nosniff",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains;",
-        "Date": "Fri, 18 Jul 2025 01:21:21 GMT",
-        "Content-Length": "414"
+        "Date": "Fri, 01 Aug 2025 14:26:33 GMT",
+        "Content-Length": "354"
     },
-    "data": "{\"Status\":404,\"URL\":\"\/objects\/251\/properties\",\"Method\":\"GET\",\"Exception\":{\"Name\":\"NotFoundException\",\"Message\":\"Eine Ausnahme vom Typ \\\"MFWS.NotFoundException\\\" wurde ausgel\u00f6st.\"},\"Stack\":\"Fehlerreferenz-ID: REDACTED-ERROR-ID\",\"Message\":\"Eine Ausnahme vom Typ \\\"MFWS.NotFoundException\\\" wurde ausgel\u00f6st.\",\"IsLoggedToVault\":true,\"IsLoggedToApplication\":true,\"ExceptionName\":\"NotFoundException\"}",
+    "data": "{\"Value\":\"ttO822wyZxDF4Ij-3ysCO4ISkHxS27VONOauSUu8nJkkKNy-CMmBehLT8xw4wscdELltZLVIcSd35a8YRUxy0c4Xi7-JppPu93xm16ms26YswrLQpEPMkcZe44nWDBPxBXN65O7fTU8Q1mRJRDKM8XcMIEJc_hRsI7Mw-Y0Kaia5lVoTdNDHSyfKrbl1atWlRw1EiQcL10J9VkiF-rnA1_Pkk9TtODR1i8UshJF_fsZZ1vnb6M47ZD0rhhzuLEtqjisGeaoCuyCLp4WdAm4qcI1PJPzkSGkaMk4O96JPEc94d66UdG18FXn77DTGoPxh5bEz7B9sZyGxFBbztVRVOw\"}",
     "context": []
 }

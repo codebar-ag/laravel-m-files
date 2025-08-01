@@ -34,13 +34,6 @@ class UploadFileRequest extends Request implements HasBody
         return '/files';
     }
 
-    protected function defaultHeaders(): array
-    {
-        return [
-            'Accept' => 'application/json',
-        ];
-    }
-
     protected function defaultBody(): array
     {
         return [

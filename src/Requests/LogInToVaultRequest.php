@@ -2,11 +2,10 @@
 
 declare(strict_types=1);
 
-namespace CodebarAg\MFiles\Requests\Authentication;
+namespace CodebarAg\MFiles\Requests;
 
 use CodebarAg\MFiles\DTO\Authentication\AuthenticationToken;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
@@ -14,24 +13,20 @@ use Saloon\Http\SoloRequest;
 use Saloon\Traits\Body\HasJsonBody;
 use Saloon\Traits\Plugins\AcceptsJson;
 
-class GetAuthenticationToken extends SoloRequest implements HasBody
+class LogInToVaultRequest extends SoloRequest implements HasBody
 {
     use AcceptsJson;
     use HasJsonBody;
 
     protected Method $method = Method::POST;
 
-    private string $sessionId;
-
     public function __construct(
         public string $url,
+        public string $vaultGuid,
         public string $username,
         public string $password,
-        public ?string $vaultGuid = null,
-        public ?string $expiration = null,
-    ) {
-        $this->sessionId = Str::uuid()->toString();
-    }
+        public ?string $sessionId = null,
+    ) {}
 
     public function resolveEndpoint(): string
     {
@@ -49,15 +44,12 @@ class GetAuthenticationToken extends SoloRequest implements HasBody
     protected function defaultBody(): array
     {
         $body = [
+            'VaultGuid' => $this->vaultGuid,
             'Username' => $this->username,
             'Password' => $this->password,
-            'VaultGuid' => $this->vaultGuid,
+            'Expiration' => now()->addDay()->toIso8601String(),
             'SessionID' => $this->sessionId,
         ];
-
-        if ($this->expiration) {
-            $body['Expiration'] = $this->expiration;
-        }
 
         return $body;
     }
@@ -66,15 +58,17 @@ class GetAuthenticationToken extends SoloRequest implements HasBody
     {
         $responseData = $response->json();
 
-        $data = [
-            'Value' => Arr::get($responseData, 'Value', $responseData),
-            'SessionID' => $this->sessionId,
-            'Expiration' => $this->expiration,
-        ];
+        if (! is_array($responseData)) {
+            throw new \InvalidArgumentException('Invalid response format: expected array');
+        }
+
+        $value = Arr::get($responseData, 'Value');
+        if (empty($value)) {
+            throw new \InvalidArgumentException('Authentication token value not found in response');
+        }
 
         return new AuthenticationToken(
-            value: Arr::get($data, 'Value', $responseData),
-            expiration: $this->expiration ? \Carbon\CarbonImmutable::parse($this->expiration) : null,
+            value: $value,
             sessionId: $this->sessionId,
         );
     }

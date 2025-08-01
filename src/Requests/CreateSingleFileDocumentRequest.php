@@ -49,14 +49,6 @@ class CreateSingleFileDocumentRequest extends Request implements HasBody
         return '/objects/0';
     }
 
-    protected function defaultHeaders(): array
-    {
-        return [
-            'Accept' => 'application/json',
-            'Content-Type' => 'application/json',
-        ];
-    }
-
     protected function defaultBody(): array
     {
         $body = [];

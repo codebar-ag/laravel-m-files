@@ -40,14 +40,13 @@ M_FILES_CACHE_DRIVER=file
 
 #### Authentication
 - `GetAuthenticationToken` - Get authentication token using username/password
-- `LogoutSession` - Logout a session with session ID
+- `LogOutFromVaultRequest` - Logout from vault with session ID
 
-#### User Operations
-- `GetCurrentUserRequest` - Get information about the current authenticated user
+#### Vault Operations
+- `GetVaultsRequest` - Get list of available vaults for the authenticated user
 
-#### Document Operations
-- `GetDocumentsRequest` - Get documents with optional filtering
-- `GetDocumentPropertiesRequest` - Get document properties
+#### Object Operations
+- `GetObjectPropertiesRequest` - Get object properties (works for documents, folders, and other object types)
 
 #### File Operations
 - `UploadFileRequest` - Upload a file to M-Files
@@ -62,6 +61,7 @@ M_FILES_CACHE_DRIVER=file
 - `PropertyValue` - Represents a property value for creating documents
 - `Document` - Represents a document in M-Files
 - `Documents` - Represents a collection of documents
+- `ObjectProperties` - Represents object properties in M-Files
 - `File` - Represents a file in M-Files
 - `DownloadedFile` - Represents a downloaded file with content and metadata
 - `User` - Represents a user in M-Files
@@ -112,62 +112,60 @@ $token = $request->send()->dto();
 // Returns AuthenticationToken with sessionId
 ```
 
-**Logout Session**
+**Logout from Vault**
 ```php
-use CodebarAg\MFiles\Requests\Authentication\LogoutSession;
+use CodebarAg\MFiles\Requests\Authentication\LogOutFromVaultRequest;
 
-$logout = (new LogoutSession(config: $config))->send()->dto();
+$logout = (new LogOutFromVaultRequest(config: $config))->send()->dto();
 // Returns true on successful logout, clears cached token
 ```
 
-#### User Operations
+#### Vault Operations
 
-**Get Current User**
+**Get Available Vaults**
 ```php
-use CodebarAg\MFiles\Requests\GetCurrentUserRequest;
-use CodebarAg\MFiles\DTO\User;
+use CodebarAg\MFiles\Requests\GetVaultsRequest;
 
-$user = $connector->send(new GetCurrentUserRequest())->dto();
-// Returns User DTO with id, name, email, etc.
+$vaults = $connector->send(new GetVaultsRequest())->json();
+// Returns array of available vaults for the authenticated user
 ```
 
-#### Document Operations
+#### Object Operations
 
-**Get Documents**
+**Get Object Properties**
 ```php
-use CodebarAg\MFiles\Requests\GetDocumentsRequest;
-use CodebarAg\MFiles\DTO\Documents;
+use CodebarAg\MFiles\Requests\GetObjectPropertiesRequest;
+use CodebarAg\MFiles\DTO\ObjectProperties;
 
-$documents = $connector->send(new GetDocumentsRequest())->dto();
-// Returns Documents collection with pagination info
-
-// With filtering parameters
-$documents = $connector->send(new GetDocumentsRequest(
-    page: 1,
-    pageSize: 5,
-    searchString: 'Sample',
-    objectTypeId: 0,
-    includeDeleted: false,
-    includeSubfolders: true,
-    sortBy: 'Title',
-    sortDirection: 'asc'
-))->dto();
-```
-
-**Get Document Properties**
-```php
-use CodebarAg\MFiles\Requests\GetDocumentPropertiesRequest;
-use CodebarAg\MFiles\DTO\DocumentProperties;
-
-$properties = $connector->send(new GetDocumentPropertiesRequest(
+$properties = $connector->send(new GetObjectPropertiesRequest(
+    objectType: 0, // 0 for documents, 1 for folders, etc.
     objectId: 123
 ))->dto();
-// Returns DocumentProperties with property details
+// Returns ObjectProperties with property details
 
 // With optional parameters
-$properties = $connector->send(new GetDocumentPropertiesRequest(
+$properties = $connector->send(new GetObjectPropertiesRequest(
+    objectType: 0,
     objectId: 123,
-    objectTypeId: 0,
+    includeDeleted: false
+))->dto();
+```
+
+**Get Object Properties**
+```php
+use CodebarAg\MFiles\Requests\GetObjectPropertiesRequest;
+use CodebarAg\MFiles\DTO\ObjectProperties;
+
+$properties = $connector->send(new GetObjectPropertiesRequest(
+    objectType: 0, // 0 for documents, 1 for folders, etc.
+    objectId: 123
+))->dto();
+// Returns ObjectProperties with property details
+
+// With optional parameters
+$properties = $connector->send(new GetObjectPropertiesRequest(
+    objectType: 0,
+    objectId: 123,
     includeDeleted: false
 ))->dto();
 ```
@@ -246,8 +244,8 @@ $downloadedFile = $connector->send(new DownloadFileRequest(
 ```php
 use CodebarAg\MFiles\Connectors\MFilesConnector;
 use CodebarAg\MFiles\DTO\Config\ConfigWithCredentials;
-use CodebarAg\MFiles\Requests\GetCurrentUserRequest;
-use CodebarAg\MFiles\Requests\GetDocumentsRequest;
+use CodebarAg\MFiles\Requests\GetVaultsRequest;
+use CodebarAg\MFiles\Requests\GetObjectPropertiesRequest;
 use CodebarAg\MFiles\Requests\CreateSingleFileDocumentRequest;
 use CodebarAg\MFiles\Requests\UploadFileRequest;
 use CodebarAg\MFiles\Requests\DownloadFileRequest;
@@ -266,11 +264,11 @@ $config = new ConfigWithCredentials(
 
 $connector = new MFilesConnector(config: $config);
 
-// Get current user
-$user = $connector->send(new GetCurrentUserRequest())->dto();
+// Get available vaults
+$vaults = $connector->send(new GetVaultsRequest())->json();
 
-// Get documents
-$documents = $connector->send(new GetDocumentsRequest())->dto();
+// Get document properties (example with document ID 123)
+$properties = $connector->send(new GetObjectPropertiesRequest(objectType: 0, objectId: 123))->dto();
 
 // Upload a file
 $fileContent = file_get_contents('document.pdf');
@@ -290,10 +288,9 @@ $document = $connector->send(new CreateSingleFileDocumentRequest(
 ))->dto();
 
 // Download a file from a document
-$file = $document->files->first();
 $downloadedFile = $connector->send(new DownloadFileRequest(
     objectId: $document->id,
-    fileId: $file->id
+    fileId: 101
 ))->dto();
 
 

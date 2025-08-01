@@ -15,10 +15,6 @@ class CreateSingleFileDocumentFixture extends Fixture
 
     protected function defineSensitiveHeaders(): array
     {
-        if (! env('SALOON_FIXTURE_REDACTION', true)) {
-            return [];
-        }
-
         return [
             'Set-Cookie' => 'REDACTED',
         ];
@@ -31,10 +27,6 @@ class CreateSingleFileDocumentFixture extends Fixture
 
     protected function defineSensitiveRegexPatterns(): array
     {
-        if (! env('SALOON_FIXTURE_REDACTION', true)) {
-            return [];
-        }
-
         return [
             '/2025-07-1[0-9]T[0-9]{2}:[0-9]{2}:[0-9]{2}Z/' => '2024-01-01T00:00:00Z',
         ];

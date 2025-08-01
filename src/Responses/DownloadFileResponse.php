@@ -12,25 +12,18 @@ final class DownloadFileResponse
     public static function createDtoFromResponse(Response $response): DownloadedFile
     {
         $headers = $response->headers();
-
-        // Extract file metadata from response headers
+        $fileContentType = $headers->get('Content-Type');
+        $fileSize = (int) $headers->get('Content-Length', 0);
         $contentDisposition = $headers->get('Content-Disposition', '');
-        $contentLength = $headers->get('Content-Length');
-        $lastModified = $headers->get('Last-Modified');
-
-        // Parse filename from Content-Disposition header
-        $filename = self::extractFilenameFromContentDisposition($contentDisposition);
-        $extension = $filename ? pathinfo($filename, PATHINFO_EXTENSION) : null;
-        $name = $filename ? pathinfo($filename, PATHINFO_FILENAME) : null;
-        $contentType = $headers->get('Content-Type');
+        $fileName = self::extractFilenameFromContentDisposition($contentDisposition);
+        $fileExtension = $fileName ? pathinfo($fileName, PATHINFO_EXTENSION) : null;
 
         return new DownloadedFile(
             content: $response->body(),
-            name: $name,
-            extension: $extension,
-            size: $contentLength ? (int) $contentLength : null,
-            lastModified: $lastModified ? \Carbon\CarbonImmutable::parse($lastModified) : null,
-            contentType: $contentType,
+            name: $fileName,
+            extension: $fileExtension,
+            size: $fileSize,
+            contentType: $fileContentType,
         );
     }
 
@@ -40,11 +33,14 @@ final class DownloadFileResponse
             return null;
         }
 
-        // Parse Content-Disposition header to extract filename
+        if (preg_match('/filename\*=utf-8\'\'([^;]+)/', $contentDisposition, $matches)) {
+            return urldecode($matches[1]);
+        }
+
         if (preg_match('/filename[^;=\n]*=(([\'"]).*?\2|[^;\n]*)/', $contentDisposition, $matches)) {
             $filename = trim($matches[1], '"\'');
 
-            return $filename;
+            return urldecode($filename);
         }
 
         return null;

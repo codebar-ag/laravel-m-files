@@ -52,8 +52,6 @@ jobs:
           M_FILES_PASSWORD: ${{ secrets.M_FILES_PASSWORD }}
           M_FILES_VAULT_GUID: ${{ secrets.M_FILES_VAULT_GUID }}
           M_FILES_CACHE_DRIVER: ${{ secrets.M_FILES_CACHE_DRIVER }}
-          M_FILES_CACHE_LIFETIME_IN_SECONDS: ${{ secrets.M_FILES_CACHE_LIFETIME_IN_SECONDS }}
-          SALOON_FIXTURE_REDACTION: true
 
       - name: Store Log Artifacts
         if: failure()

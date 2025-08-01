@@ -6,19 +6,15 @@ namespace CodebarAg\MFiles\Fixtures;
 
 use Saloon\Http\Faking\Fixture;
 
-class CurrentUserFixture extends Fixture
+class GetVaultFixture extends Fixture
 {
     protected function defineName(): string
     {
-        return 'current-user';
+        return 'object-properties';
     }
 
     protected function defineSensitiveHeaders(): array
     {
-        if (! env('SALOON_FIXTURE_REDACTION', true)) {
-            return [];
-        }
-
         return [
             'Set-Cookie' => 'REDACTED',
         ];
@@ -26,19 +22,13 @@ class CurrentUserFixture extends Fixture
 
     protected function defineSensitiveJsonParameters(): array
     {
-        if (! env('SALOON_FIXTURE_REDACTION', true)) {
-            return [];
-        }
-
-        return [
-            'AccountName' => 'redacted@example.com',
-            'SerialNumber' => 'REDACTED-SERIAL',
-            'FullName' => 'REDACTED USER',
-        ];
+        return [];
     }
 
     protected function defineSensitiveRegexPatterns(): array
     {
-        return [];
+        return [
+            '/Fehlerreferenz-ID: [a-f0-9-]{36}/' => 'Fehlerreferenz-ID: REDACTED-ERROR-ID',
+        ];
     }
 }

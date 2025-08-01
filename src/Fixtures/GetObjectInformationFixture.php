@@ -6,19 +6,15 @@ namespace CodebarAg\MFiles\Fixtures;
 
 use Saloon\Http\Faking\Fixture;
 
-class LogoutSessionFixture extends Fixture
+class GetObjectInformationFixture extends Fixture
 {
     protected function defineName(): string
     {
-        return 'logout-session';
+        return 'object-properties';
     }
 
     protected function defineSensitiveHeaders(): array
     {
-        if (! env('SALOON_FIXTURE_REDACTION', true)) {
-            return [];
-        }
-
         return [
             'Set-Cookie' => 'REDACTED',
         ];
@@ -31,6 +27,8 @@ class LogoutSessionFixture extends Fixture
 
     protected function defineSensitiveRegexPatterns(): array
     {
-        return [];
+        return [
+            '/Fehlerreferenz-ID: [a-f0-9-]{36}/' => 'Fehlerreferenz-ID: REDACTED-ERROR-ID',
+        ];
     }
 }

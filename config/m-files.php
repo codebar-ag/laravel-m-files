@@ -5,7 +5,7 @@ return [
         'url' => env('M_FILES_URL'),
         'username' => env('M_FILES_USERNAME'),
         'password' => env('M_FILES_PASSWORD'),
-        'expiration' => env('M_FILES_EXPIRATION_SECONDS', '3600'), // Default to 1 hour
+        'expiration' => env('M_FILES_EXPIRATION_SECONDS', 1),
         'session_id' => env('M_FILES_SESSION_ID'),
     ],
 

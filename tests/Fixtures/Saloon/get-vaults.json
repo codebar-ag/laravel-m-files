@@ -3,15 +3,16 @@
     "headers": {
         "Cache-Control": "private, must-revalidate, max-age=0",
         "Content-Type": "application\/json; charset=utf-8",
-        "Expires": "Wed, 17 Jul 2024 00:31:06 GMT",
+        "Expires": "Wed, 31 Jul 2024 13:56:35 GMT",
         "X-Frame-Options": "SAMEORIGIN",
         "Content-Security-Policy": "default-src 'none'; object-src 'self'; script-src 'unsafe-inline' 'unsafe-eval' 'self' blob: https:\/\/js.monitor.azure.com; style-src 'unsafe-inline' 'self'; font-src 'self' data:; connect-src 'self' https:\/\/northeurope-0.in.applicationinsights.azure.com https:\/\/js.monitor.azure.com; img-src 'self' blob: data:; manifest-src 'self'; form-action 'self' javascript:; frame-src * blob:; frame-ancestors 'self';",
+        "Set-Cookie": "ASP.NET_SessionId=ag4kubvoz3z02kwlc4umynxv; path=\/; secure; HttpOnly; SameSite=Lax",
         "X-XSS-Protection": "1; mode=block",
         "X-Content-Type-Options": "nosniff",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains;",
-        "Date": "Fri, 18 Jul 2025 00:31:06 GMT",
-        "Content-Length": "14"
+        "Date": "Fri, 01 Aug 2025 13:56:35 GMT",
+        "Content-Length": "479"
     },
-    "data": "{\"Value\":true}",
+    "data": "[{\"Name\":\"Treuhand\",\"GUID\":\"{35A86EFA-6B40-4718-93C1-1B76816EC724}\",\"Authentication\":\"n3TWBPa0BHHdIi8P_KrflbUco7YKCDC890YfC20rT-1ZvHCMYpyYSWALewMuJkA7SdOZHHH7Yuym7vZ_2ctJgy-KaFL16ClH7FbMLW2cvXxrjEhczlVwgo5Cssq48jnMQYLoZsuwRsxAW1Bgv9qGkT-mh4TjwGr2989xX4MyWFQsi4KwGXBkhncZpUpCKUi5oBB0vI9nezw0Ic8uUWsaCyUCWmV2Xo4mRUqRmTb-HH37vEfyeQVWEPKM4l0TfsEiZ0U10VnUoEXvgGbsYOjwCli_Dq1mReB58ReH0Aa78YbQx4yWpMlCKodN0-F79mTJumweRtRGALyvwbjc3w51bg\",\"DNSNames\":[\"https:\/\/m-files.biz-solutions.ch\"]}]",
     "context": []
 }

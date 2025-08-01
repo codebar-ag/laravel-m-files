@@ -4,42 +4,67 @@ declare(strict_types=1);
 
 use CodebarAg\MFiles\DTO\Authentication\AuthenticationToken;
 use CodebarAg\MFiles\DTO\Config\ConfigWithCredentials;
-use CodebarAg\MFiles\Fixtures\AuthenticationTokenFixture;
-use CodebarAg\MFiles\Fixtures\LogoutSessionFixture;
-use CodebarAg\MFiles\Requests\Authentication\GetAuthenticationToken;
-use CodebarAg\MFiles\Requests\Authentication\LogoutSession;
+use CodebarAg\MFiles\Fixtures\LogInToVaultFixture;
+use CodebarAg\MFiles\Fixtures\LogOutFromVaultFixture;
+use CodebarAg\MFiles\Requests\LogInToVaultRequest;
+use CodebarAg\MFiles\Requests\LogOutFromVaultRequest;
 use Illuminate\Support\Facades\Cache;
 use Saloon\Laravel\Facades\Saloon;
 
 test('can create connector with default config', function () {
+
     Saloon::fake([
-        GetAuthenticationToken::class => new AuthenticationTokenFixture,
+        LogInToVaultRequest::class => new LogInToVaultFixture,
     ]);
 
-    $config = new ConfigWithCredentials;
+    $config = new ConfigWithCredentials(
+        url: 'https://test.m-files.com',
+        vaultGuid: 'test-vault-guid',
+        username: 'test-user',
+        password: 'test-password',
+        cacheDriver: 'array'
+    );
 
     expect($config)->toBeInstanceOf(ConfigWithCredentials::class);
 });
 
 test('can create connector with default config then stores and retrieves from cache', function () {
     Saloon::fake([
-        GetAuthenticationToken::class => new AuthenticationTokenFixture,
+        LogInToVaultRequest::class => new LogInToVaultFixture,
     ]);
 
-    $config = new ConfigWithCredentials;
+    $config = new ConfigWithCredentials(
+        url: 'https://test.m-files.com',
+        vaultGuid: 'test-vault-guid',
+        username: 'test-user',
+        password: 'test-password',
+        cacheDriver: 'array'
+    );
 
-    $config2 = new ConfigWithCredentials;
+    $config2 = new ConfigWithCredentials(
+        url: 'https://test.m-files.com',
+        vaultGuid: 'test-vault-guid',
+        username: 'test-user',
+        password: 'test-password',
+        cacheDriver: 'array'
+    );
 
     expect($config)->toBeInstanceOf(ConfigWithCredentials::class);
     expect($config->toArray())->toBe($config2->toArray());
 });
 
 test('can logout session', function () {
-    $config = new ConfigWithCredentials;
+    $config = new ConfigWithCredentials(
+        url: 'https://test.m-files.com',
+        vaultGuid: 'test-vault-guid',
+        username: 'test-user',
+        password: 'test-password',
+        cacheDriver: 'array'
+    );
 
     Saloon::fake([
-        GetAuthenticationToken::class => new AuthenticationTokenFixture,
-        LogoutSession::class => new LogoutSessionFixture,
+        LogInToVaultRequest::class => new LogInToVaultFixture,
+        LogOutFromVaultRequest::class => new LogOutFromVaultFixture,
     ]);
 
     $cacheKey = AuthenticationToken::generateCacheKey(
@@ -51,7 +76,7 @@ test('can logout session', function () {
 
     expect(Cache::store($config->cacheDriver)->has($cacheKey))->toBeTrue();
 
-    $logout = new LogoutSession($config)->send()->dto();
+    $logout = new LogOutFromVaultRequest($config)->send()->dto();
 
     expect($logout)->toBeTrue();
     expect(Cache::store($config->cacheDriver)->has($cacheKey))->toBeFalse();

@@ -4,20 +4,26 @@ declare(strict_types=1);
 
 use CodebarAg\MFiles\Connectors\MFilesConnector;
 use CodebarAg\MFiles\DTO\Config\ConfigWithCredentials;
-use CodebarAg\MFiles\Fixtures\AuthenticationTokenFixture;
-use CodebarAg\MFiles\Fixtures\UploadFileFixture;
-use CodebarAg\MFiles\Requests\Authentication\GetAuthenticationToken;
+use CodebarAg\MFiles\Requests\LogInToVaultRequest;
 use CodebarAg\MFiles\Requests\UploadFileRequest;
+use Saloon\Http\Faking\MockResponse;
 use Saloon\Laravel\Facades\Saloon;
 
 test('can upload file', function () {
-    Saloon::fake([
-        GetAuthenticationToken::class => new AuthenticationTokenFixture,
-        UploadFileRequest::class => new UploadFileFixture,
-    ]);
 
-    $config = new ConfigWithCredentials;
-    $connector = new MFilesConnector($config);
+    /*     Saloon::fake([
+            LogInToVaultRequest::class => MockResponse::fixture('login-to-vault'),
+            UploadFileRequest::class => MockResponse::fixture('upload-file'),
+        ]);
+     */
+    $configuration = new ConfigWithCredentials(
+        url: config('m-files.auth.url'),
+        vaultGuid: config('m-files.vault_guid'),
+        username: config('m-files.auth.username'),
+        password: config('m-files.auth.password'),
+    );
+
+    $connector = new MFilesConnector($configuration);
 
     $filePath = __DIR__.'/../../Fixtures/Files/test-1.pdf';
     $fileContent = file_get_contents($filePath);

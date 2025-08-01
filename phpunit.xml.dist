@@ -26,8 +26,6 @@
     <env name="M_FILES_PASSWORD" value=""/>
     <env name="M_FILES_VAULT_GUID" value=""/>
     <env name="M_FILES_CACHE_DRIVER" value="file"/>
-    <env name="M_FILES_CACHE_LIFETIME_IN_SECONDS" value="0"/>
-    <env name="SALOON_FIXTURE_REDACTION" value="true"/>
 </php>
 <source>
     <include>

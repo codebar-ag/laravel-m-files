@@ -9,25 +9,29 @@ use CodebarAg\MFiles\DTO\Document;
 use CodebarAg\MFiles\DTO\File;
 use CodebarAg\MFiles\DTO\PropertyValue;
 use CodebarAg\MFiles\Enums\MFDataTypeEnum;
-use CodebarAg\MFiles\Fixtures\AuthenticationTokenFixture;
-use CodebarAg\MFiles\Fixtures\CreateSingleFileDocumentFixture;
-use CodebarAg\MFiles\Fixtures\UploadFileFixture;
-use CodebarAg\MFiles\Requests\Authentication\GetAuthenticationToken;
 use CodebarAg\MFiles\Requests\CreateSingleFileDocumentRequest;
+use CodebarAg\MFiles\Requests\LogInToVaultRequest;
 use CodebarAg\MFiles\Requests\UploadFileRequest;
+use Saloon\Http\Faking\MockResponse;
 use Saloon\Laravel\Facades\Saloon;
 
 test('can create single file document with basic parameters', function () {
-    Saloon::fake([
-        GetAuthenticationToken::class => new AuthenticationTokenFixture,
-        UploadFileRequest::class => new UploadFileFixture,
-        CreateSingleFileDocumentRequest::class => new CreateSingleFileDocumentFixture,
-    ]);
 
-    $config = new ConfigWithCredentials;
+    /*     Saloon::fake([
+            LogInToVaultRequest::class => MockResponse::fixture('login-to-vault'),
+            UploadFileRequest::class => MockResponse::fixture('upload-file'),
+            CreateSingleFileDocumentRequest::class => MockResponse::fixture('create-single-file-document'),
+        ]); */
+
+    $config = new ConfigWithCredentials(
+        url: config('m-files.auth.url'),
+        vaultGuid: config('m-files.vault_guid'),
+        username: config('m-files.auth.username'),
+        password: config('m-files.auth.password'),
+        cacheDriver: 'array'
+    );
     $connector = new MFilesConnector($config);
 
-    // Step 1: Upload the file
     $filePath = __DIR__.'/../../Fixtures/Files/test-1.pdf';
     $fileContent = file_get_contents($filePath);
     $fileName = 'test-1.pdf';
@@ -36,8 +40,6 @@ test('can create single file document with basic parameters', function () {
         fileContent: $fileContent,
         fileName: $fileName
     ))->dto();
-
-    // Step 2: Create document with uploaded file
     $document = $connector->send(new CreateSingleFileDocumentRequest(
         title: 'Sample Document',
         file: $uploadedFile
@@ -54,16 +56,21 @@ test('can create single file document with basic parameters', function () {
 });
 
 test('can create single file document with custom property values', function () {
-    Saloon::fake([
-        GetAuthenticationToken::class => new AuthenticationTokenFixture,
-        UploadFileRequest::class => new UploadFileFixture,
-        CreateSingleFileDocumentRequest::class => new CreateSingleFileDocumentFixture,
-    ]);
+    /*     Saloon::fake([
+            LogInToVaultRequest::class => MockResponse::fixture('login-to-vault'),
+            UploadFileRequest::class => MockResponse::fixture('upload-file'),
+            CreateSingleFileDocumentRequest::class => MockResponse::fixture('create-single-file-document'),
+        ]); */
 
-    $config = new ConfigWithCredentials;
+    $config = new ConfigWithCredentials(
+        url: config('m-files.auth.url'),
+        vaultGuid: config('m-files.vault_guid'),
+        username: config('m-files.auth.username'),
+        password: config('m-files.auth.password'),
+    );
+
     $connector = new MFilesConnector($config);
 
-    // Step 1: Upload the file
     $filePath = __DIR__.'/../../Fixtures/Files/test-1.pdf';
     $fileContent = file_get_contents($filePath);
     $fileName = 'test-1.pdf';
@@ -77,8 +84,6 @@ test('can create single file document with custom property values', function () 
         new PropertyValue(0, MFDataTypeEnum::TEXT, 'Custom Title'),
         new PropertyValue(5, MFDataTypeEnum::DATE, '2024-01-01'),
     ];
-
-    // Step 2: Create document with uploaded file
     $document = $connector->send(new CreateSingleFileDocumentRequest(
         title: 'Custom Document',
         file: $uploadedFile,
@@ -105,16 +110,21 @@ test('throws exception when file data is empty', function () {
 });
 
 test('can access file properties from document', function () {
-    Saloon::fake([
-        GetAuthenticationToken::class => new AuthenticationTokenFixture,
-        UploadFileRequest::class => new UploadFileFixture,
-        CreateSingleFileDocumentRequest::class => new CreateSingleFileDocumentFixture,
-    ]);
+    /*     Saloon::fake([
+            LogInToVaultRequest::class => MockResponse::fixture('login-to-vault'),
+            UploadFileRequest::class => MockResponse::fixture('upload-file'),
+            CreateSingleFileDocumentRequest::class => MockResponse::fixture('create-single-file-document'),
+        ]); */
 
-    $config = new ConfigWithCredentials;
+    $config = new ConfigWithCredentials(
+        url: config('m-files.auth.url'),
+        vaultGuid: config('m-files.vault_guid'),
+        username: config('m-files.auth.username'),
+        password: config('m-files.auth.password'),
+    );
+
     $connector = new MFilesConnector($config);
 
-    // Step 1: Upload the file
     $filePath = __DIR__.'/../../Fixtures/Files/test-1.pdf';
     $fileContent = file_get_contents($filePath);
     $fileName = 'test-1.pdf';
@@ -123,8 +133,6 @@ test('can access file properties from document', function () {
         fileContent: $fileContent,
         fileName: $fileName
     ))->dto();
-
-    // Step 2: Create document with uploaded file
     $document = $connector->send(new CreateSingleFileDocumentRequest(
         title: 'Document with File',
         file: $uploadedFile

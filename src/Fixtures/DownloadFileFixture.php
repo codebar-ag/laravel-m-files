@@ -15,10 +15,6 @@ class DownloadFileFixture extends Fixture
 
     protected function defineSensitiveHeaders(): array
     {
-        if (! env('SALOON_FIXTURE_REDACTION', true)) {
-            return [];
-        }
-
         return [
             'Set-Cookie' => 'REDACTED',
         ];
@@ -26,10 +22,6 @@ class DownloadFileFixture extends Fixture
 
     protected function defineSensitiveJsonParameters(): array
     {
-        if (! env('SALOON_FIXTURE_REDACTION', true)) {
-            return [];
-        }
-
         return [
             'Value' => 'REDACTED-AUTH-TOKEN',
         ];
@@ -37,10 +29,6 @@ class DownloadFileFixture extends Fixture
 
     protected function defineSensitiveRegexPatterns(): array
     {
-        if (! env('SALOON_FIXTURE_REDACTION', true)) {
-            return [];
-        }
-
         return [
             '/[A-Za-z0-9_-]{100,}/' => 'REDACTED-AUTH-TOKEN',
         ];
