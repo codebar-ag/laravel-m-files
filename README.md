@@ -32,7 +32,6 @@ Add your M-Files authentication credentials to your `.env` file:
 M_FILES_URL=https://your-mfiles-server.com
 M_FILES_USERNAME=your-username
 M_FILES_PASSWORD=your-password
-M_FILES_IDENTIFIER=default
 M_FILES_VAULT_GUID=ABC0DE2G-3HW-QWCQ-SDF3-WERWETWETW
 M_FILES_CACHE_DRIVER=file
 ```
@@ -83,10 +82,8 @@ $config = new ConfigWithCredentials(
     url: 'https://your-mfiles-server.com',
     username: 'your-username',
     password: 'your-password',
-    identifier: 'default',
     cacheDriver: 'file',
-    requestTimeoutInSeconds: 15,
-    vaultGuid: 'ABC0DE2G-3HW-QWCQ-SDF3-WERWETWETW',
+    vaultGuid: '{ABC0DE2G-3HW-QWCQ-SDF3-WERWETWETW}',
     authenticationToken: null // Optional to handle authentication manually, leave null to use automatic token management
 );
 
@@ -108,7 +105,7 @@ $request = new GetAuthenticationToken(
     url: 'https://your-mfiles-server.com',
     username: 'your-username',
     password: 'your-password',
-    vaultGuid: 'ABC0DE2G-3HW-QWCQ-SDF3-WERWETWETW'
+    vaultGuid: '{ABC0DE2G-3HW-QWCQ-SDF3-WERWETWETW}',
 );
 
 $token = $request->send()->dto();

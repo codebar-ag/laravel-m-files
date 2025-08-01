@@ -51,7 +51,7 @@ class GetAuthenticationToken extends SoloRequest implements HasBody
         $body = [
             'Username' => $this->username,
             'Password' => $this->password,
-            'VaultGuid' => '{'.$this->vaultGuid.'}',
+            'VaultGuid' => $this->vaultGuid,
             'SessionID' => $this->sessionId,
         ];
 
