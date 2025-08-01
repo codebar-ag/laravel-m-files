@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use CodebarAg\MFiles\DTO\Config\ConfigWithCredentials;
+use CodebarAg\MFiles\DTO\ConfigWithCredentials;
 use CodebarAg\MFiles\Helpers\CacheKeyManager;
 
 uses()->group('helpers');

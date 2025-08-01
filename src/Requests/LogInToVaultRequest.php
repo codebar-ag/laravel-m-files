@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CodebarAg\MFiles\Requests;
 
-use CodebarAg\MFiles\DTO\Authentication\AuthenticationToken;
+use CodebarAg\MFiles\DTO\AuthenticationToken;
 use Illuminate\Support\Arr;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CodebarAg\MFiles\Helpers;
 
-use CodebarAg\MFiles\DTO\Config\ConfigWithCredentials;
+use CodebarAg\MFiles\DTO\ConfigWithCredentials;
 use Illuminate\Support\Facades\Cache;
 
 class CacheKeyManager

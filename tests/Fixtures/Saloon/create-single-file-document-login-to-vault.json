@@ -3,16 +3,16 @@
     "headers": {
         "Cache-Control": "private, must-revalidate, max-age=0",
         "Content-Type": "application\/json; charset=utf-8",
-        "Expires": "Wed, 31 Jul 2024 15:37:54 GMT",
+        "Expires": "Wed, 31 Jul 2024 15:40:42 GMT",
         "X-Frame-Options": "SAMEORIGIN",
         "Content-Security-Policy": "default-src 'none'; object-src 'self'; script-src 'unsafe-inline' 'unsafe-eval' 'self' blob: https:\/\/js.monitor.azure.com; style-src 'unsafe-inline' 'self'; font-src 'self' data:; connect-src 'self' https:\/\/northeurope-0.in.applicationinsights.azure.com https:\/\/js.monitor.azure.com; img-src 'self' blob: data:; manifest-src 'self'; form-action 'self' javascript:; frame-src * blob:; frame-ancestors 'self';",
-        "Set-Cookie": "ASP.NET_SessionId=3vj2gwzbvcpellezr1rhmrvr; path=\/; secure; HttpOnly; SameSite=Lax",
+        "Set-Cookie": "ASP.NET_SessionId=ydn1bmjkxgouia3yrreljmk1; path=\/; secure; HttpOnly; SameSite=Lax",
         "X-XSS-Protection": "1; mode=block",
         "X-Content-Type-Options": "nosniff",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains;",
-        "Date": "Fri, 01 Aug 2025 15:37:54 GMT",
-        "Content-Length": "479"
+        "Date": "Fri, 01 Aug 2025 15:40:42 GMT",
+        "Content-Length": "354"
     },
-    "data": "[{\"Name\":\"Treuhand\",\"GUID\":\"{35A86EFA-6B40-4718-93C1-1B76816EC724}\",\"Authentication\":\"mObClEyUgtrliz612LfawNzEW3j-IyiZXbLmNIsdDtxdgSe-536xtwdX3VEwak5Y7fGtG3hsm1lcADEHUYjsQFitfxSWmcMMU_3qnDLflOpR-1wr9ndDvFn-qrVsSgeElZDnDVMqthj3lRNYXgUHF_VuGeuXiKrUIXKsd4gmn14-PqWW6CWyLyJHtLzwPZKBu53FXTEpz7aCYe-Dnqih60QALZfVJcPfONz4syIK4uGHiPSneVc3mrVI5rwsjcMvhQroy7K1ec6vQ0MycMQ5CwyiE8IvNen7ln_DqiF5z4cphhBM1fdMZzRjo8PBgIa_1pVxJRndyd-xzY-m4dZyqw\",\"DNSNames\":[\"https:\/\/m-files.biz-solutions.ch\"]}]",
+    "data": "{\"Value\":\"VaDHvyo5U5zwJXN1LHCdh5qHXiUnoQIIA2IYnxzk61ew09DjmAMGS7Ig7NoG5evD2rxqoPR4YQz_kDl0EweE6shS9DWVsnkxxE3prROezfwfZvElFYcGRNS8CnZ7UAYOuYAZGJL0kTKz_MBxKSrXY3KZcOoKVs8lMOTYh90pNdRbTxIxUUIODYVSw_QrqMWvhskm1mq3wGEKwA69epANkJYmoH_U76oQhcq_oeG1p8KwZdQiEQP5QUt92W_2twtu-a-dI1BioE9dPNPySg8eLzvMi0zcNR8KWPTd_zV8EAmFmn_iBBzfZfswPCpzA31lM5AMHWt277RfARu2Q6mIyQ\"}",
     "context": []
 }

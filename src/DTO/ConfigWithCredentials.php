@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CodebarAg\MFiles\DTO\Config;
+namespace CodebarAg\MFiles\DTO;
 
 use Illuminate\Support\Arr;
 

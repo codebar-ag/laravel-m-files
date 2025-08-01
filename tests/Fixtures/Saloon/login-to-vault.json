@@ -3,16 +3,16 @@
     "headers": {
         "Cache-Control": "private, must-revalidate, max-age=0",
         "Content-Type": "application\/json; charset=utf-8",
-        "Expires": "Wed, 31 Jul 2024 14:46:04 GMT",
+        "Expires": "Wed, 31 Jul 2024 15:36:14 GMT",
         "X-Frame-Options": "SAMEORIGIN",
         "Content-Security-Policy": "default-src 'none'; object-src 'self'; script-src 'unsafe-inline' 'unsafe-eval' 'self' blob: https:\/\/js.monitor.azure.com; style-src 'unsafe-inline' 'self'; font-src 'self' data:; connect-src 'self' https:\/\/northeurope-0.in.applicationinsights.azure.com https:\/\/js.monitor.azure.com; img-src 'self' blob: data:; manifest-src 'self'; form-action 'self' javascript:; frame-src * blob:; frame-ancestors 'self';",
-        "Set-Cookie": "ASP.NET_SessionId=ds32keqrh4avmsdqd23fm5zp; path=\/; secure; HttpOnly; SameSite=Lax",
+        "Set-Cookie": "ASP.NET_SessionId=duprit2la2ndebt3lf1x4mj5; path=\/; secure; HttpOnly; SameSite=Lax",
         "X-XSS-Protection": "1; mode=block",
         "X-Content-Type-Options": "nosniff",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains;",
-        "Date": "Fri, 01 Aug 2025 14:46:04 GMT",
+        "Date": "Fri, 01 Aug 2025 15:36:14 GMT",
         "Content-Length": "354"
     },
-    "data": "{\"Value\":\"LUIKA03KuR6X_TWBm-Xo_RtpY8aTtlww1YAzsqP-EPy7YjA_9vVPEoIuPKT-j-o6OUEHuWXjqzrLs4BYAfPg6bkPlxFnFavYB1afI1r4pZvaKil8huJmVyCqHnjVMGvIOls2zJWUpgywXCwyWDi5At_N45exreWxsliXwhSgDCXML_xzHS8G0IgaAyuI8Z526m8eOH-slHEyvcmjlM0RhLdOM3p5T3R0tLzCghdwPKk3IXgTxrpq9wDpG2qaak_QD4pO4A-YkGYxmzVS2eXQ7hxUwhCmM-CW7vHvD2iS5_hhZRpSwKtyXfS_ob7AKIipSJDVEHpwigZSNeB13V14-w\"}",
+    "data": "{\"Value\":\"cTLaCmVUEnLy23IYT-NyZGRtzEvSOOANbJWkHH2G39Zep0wsjfm9ieBtz3M02bcPraJhXVapSm-SPJ5hPP7pcLg44jS1oTgPajc9uDcPtDqDTO4aqdK5Rddw8-VSUISptQwp-f2o8NcIwgfrJGGbXMNOR15uKJtm_Shzb86FwKAR41Nc1hLCJfcQaNxIEwSNhnl--2GDORGgRmhYxFXiMnO0D_BO_gVeBDoONORngMgno24aE5egN7Gp-qJ5ln2yNh4dCfWx5A6Oq8HJQq463Bdhy1OLpuTZ1oLqemE3llVm-WjIB4P-5W4mqwmuzaHbQ152FNtgtAtZVgOz_P1mTw\"}",
     "context": []
 }

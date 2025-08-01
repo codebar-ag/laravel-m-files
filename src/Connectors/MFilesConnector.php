@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace CodebarAg\MFiles\Connectors;
 
-use CodebarAg\MFiles\DTO\Authentication\AuthenticationToken;
-use CodebarAg\MFiles\DTO\Config\ConfigWithCredentials;
+use CodebarAg\MFiles\DTO\AuthenticationToken;
+use CodebarAg\MFiles\DTO\ConfigWithCredentials;
 use Saloon\Http\Auth\HeaderAuthenticator;
 use Saloon\Http\Connector;
 use Saloon\Traits\Plugins\AcceptsJson;

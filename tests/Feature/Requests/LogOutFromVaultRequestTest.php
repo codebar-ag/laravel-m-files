@@ -3,20 +3,19 @@
 declare(strict_types=1);
 
 use CodebarAg\MFiles\Connectors\MFilesConnector;
-use CodebarAg\MFiles\DTO\Authentication\AuthenticationToken;
-use CodebarAg\MFiles\DTO\Config\ConfigWithCredentials;
-use CodebarAg\MFiles\Fixtures\LogInToVaultFixture;
-use CodebarAg\MFiles\Fixtures\LogOutFromVaultFixture;
+use CodebarAg\MFiles\DTO\AuthenticationToken;
+use CodebarAg\MFiles\DTO\ConfigWithCredentials;
 use CodebarAg\MFiles\Helpers\CacheKeyManager;
 use CodebarAg\MFiles\Requests\LogInToVaultRequest;
 use CodebarAg\MFiles\Requests\LogOutFromVaultRequest;
+use Saloon\Http\Faking\MockResponse;
 use Saloon\Laravel\Facades\Saloon;
 
 test('can logout from vault and clear authentication token from cache', function () {
 
     Saloon::fake([
-        LogInToVaultRequest::class => new LogInToVaultFixture,
-        LogOutFromVaultRequest::class => new LogOutFromVaultFixture,
+        LogInToVaultRequest::class => MockResponse::fixture('logout-from-vault-login-to-vault'),
+        LogOutFromVaultRequest::class => MockResponse::fixture('logout-from-vault'),
     ]);
 
     $config = new ConfigWithCredentials(

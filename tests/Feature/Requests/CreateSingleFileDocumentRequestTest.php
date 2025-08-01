@@ -3,9 +3,8 @@
 declare(strict_types=1);
 
 use CodebarAg\MFiles\Connectors\MFilesConnector;
-use CodebarAg\MFiles\DTO\Config\ConfigWithCredentials;
+use CodebarAg\MFiles\DTO\ConfigWithCredentials;
 use CodebarAg\MFiles\DTO\Document;
-use CodebarAg\MFiles\DTO\File;
 use CodebarAg\MFiles\DTO\PropertyValue;
 use CodebarAg\MFiles\Enums\MFDataTypeEnum;
 use CodebarAg\MFiles\Requests\CreateSingleFileDocumentRequest;
@@ -16,11 +15,11 @@ use Saloon\Http\Faking\MockResponse;
 use Saloon\Laravel\Facades\Saloon;
 
 test('can create single file document with custom property values', function () {
-    /*     Saloon::fake([
-            LogInToVaultRequest::class => MockResponse::fixture('login-to-vault'),
-            UploadFileRequest::class => MockResponse::fixture('upload-file'),
-            CreateSingleFileDocumentRequest::class => MockResponse::fixture('create-single-file-document'),
-        ]); */
+    Saloon::fake([
+        LogInToVaultRequest::class => MockResponse::fixture('create-single-file-document-login-to-vault'),
+        UploadFileRequest::class => MockResponse::fixture('upload-file'),
+        CreateSingleFileDocumentRequest::class => MockResponse::fixture('create-single-file-document'),
+    ]);
 
     $config = new ConfigWithCredentials(
         url: config('m-files.auth.url'),
@@ -51,11 +50,9 @@ test('can create single file document with custom property values', function () 
         title: 'Custom Document',
         files: [$fileUpload],
         propertyValues: $propertyValues
-    ));
-
-    dd($document->status(), $document->json());
+    ))->dto();
 
     expect($document)->toBeInstanceOf(Document::class);
-    expect($document->id)->toBe(123);
-    expect($document->title)->toBe('Custom Document');
+    expect($document->id)->toBe(1102);
+    expect($document->title)->toBe('test-1');
 })->group('create-single-file-document');

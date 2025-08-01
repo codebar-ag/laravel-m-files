@@ -3,19 +3,18 @@
 declare(strict_types=1);
 
 use CodebarAg\MFiles\Connectors\MFilesConnector;
-use CodebarAg\MFiles\DTO\Config\ConfigWithCredentials;
+use CodebarAg\MFiles\DTO\ConfigWithCredentials;
 use CodebarAg\MFiles\DTO\ObjectProperties;
-use CodebarAg\MFiles\Fixtures\GetObjectInformationFixture;
-use CodebarAg\MFiles\Fixtures\LogInToVaultFixture;
 use CodebarAg\MFiles\Requests\GetObjectInformationRequest;
 use CodebarAg\MFiles\Requests\LogInToVaultRequest;
+use Saloon\Http\Faking\MockResponse;
 use Saloon\Laravel\Facades\Saloon;
 
 test('can get object properties using object type and object id', function () {
 
     Saloon::fake([
-        LogInToVaultRequest::class => new LogInToVaultFixture,
-        GetObjectInformationRequest::class => new GetObjectInformationFixture,
+        LogInToVaultRequest::class => MockResponse::fixture('get-object-information-login-to-vault'),
+        GetObjectInformationRequest::class => MockResponse::fixture('get-object-information'),
     ]);
 
     $config = new ConfigWithCredentials(

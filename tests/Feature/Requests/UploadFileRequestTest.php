@@ -3,19 +3,18 @@
 declare(strict_types=1);
 
 use CodebarAg\MFiles\Connectors\MFilesConnector;
-use CodebarAg\MFiles\DTO\Config\ConfigWithCredentials;
-use CodebarAg\MFiles\Fixtures\LogInToVaultFixture;
-use CodebarAg\MFiles\Fixtures\UploadFileFixture;
+use CodebarAg\MFiles\DTO\ConfigWithCredentials;
 use CodebarAg\MFiles\Requests\LogInToVaultRequest;
 use CodebarAg\MFiles\Requests\UploadFileRequest;
 use Illuminate\Support\Arr;
+use Saloon\Http\Faking\MockResponse;
 use Saloon\Laravel\Facades\Saloon;
 
 test('can upload file', function () {
 
     Saloon::fake([
-        LogInToVaultRequest::class => new LogInToVaultFixture,
-        UploadFileRequest::class => new UploadFileFixture,
+        LogInToVaultRequest::class => MockResponse::fixture('upload-file-login-to-vault'),
+        UploadFileRequest::class => MockResponse::fixture('upload-file'),
     ]);
 
     $configuration = new ConfigWithCredentials(

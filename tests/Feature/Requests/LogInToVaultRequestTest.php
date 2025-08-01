@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-use CodebarAg\MFiles\DTO\Authentication\AuthenticationToken;
-use CodebarAg\MFiles\DTO\Config\ConfigWithCredentials;
-use CodebarAg\MFiles\Fixtures\LogInToVaultFixture;
+use CodebarAg\MFiles\DTO\AuthenticationToken;
+use CodebarAg\MFiles\DTO\ConfigWithCredentials;
 use CodebarAg\MFiles\Helpers\CacheKeyManager;
 use CodebarAg\MFiles\Requests\LogInToVaultRequest;
+use Saloon\Http\Faking\MockResponse;
 use Saloon\Laravel\Facades\Saloon;
 
 test('can login to vault and get authentication token with caching', function () {
 
     Saloon::fake([
-        LogInToVaultRequest::class => new LogInToVaultFixture,
+        LogInToVaultRequest::class => MockResponse::fixture('login-to-vault'),
     ]);
 
     $config = new ConfigWithCredentials(

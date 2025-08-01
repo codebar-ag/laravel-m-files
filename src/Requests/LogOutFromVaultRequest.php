@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CodebarAg\MFiles\Requests;
 
-use CodebarAg\MFiles\DTO\Config\ConfigWithCredentials;
+use CodebarAg\MFiles\DTO\ConfigWithCredentials;
 use CodebarAg\MFiles\Helpers\CacheKeyManager;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;

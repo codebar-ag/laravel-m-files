@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace CodebarAg\MFiles\DTO\Authentication;
+namespace CodebarAg\MFiles\DTO;
 
-use CodebarAg\MFiles\DTO\Config\ConfigWithCredentials;
 use CodebarAg\MFiles\Helpers\CacheKeyManager;
 use CodebarAg\MFiles\Requests\LogInToVaultRequest;
 use Illuminate\Support\Str;

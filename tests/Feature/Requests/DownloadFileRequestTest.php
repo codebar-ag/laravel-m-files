@@ -3,19 +3,18 @@
 declare(strict_types=1);
 
 use CodebarAg\MFiles\Connectors\MFilesConnector;
-use CodebarAg\MFiles\DTO\Config\ConfigWithCredentials;
+use CodebarAg\MFiles\DTO\ConfigWithCredentials;
 use CodebarAg\MFiles\DTO\DownloadedFile;
-use CodebarAg\MFiles\Fixtures\DownloadFileFixture;
-use CodebarAg\MFiles\Fixtures\LogInToVaultFixture;
 use CodebarAg\MFiles\Requests\DownloadFileRequest;
 use CodebarAg\MFiles\Requests\LogInToVaultRequest;
+use Saloon\Http\Faking\MockResponse;
 use Saloon\Http\Response;
 use Saloon\Laravel\Facades\Saloon;
 
 it('can download a file from a document', function () {
     Saloon::fake([
-        LogInToVaultRequest::class => new LogInToVaultFixture,
-        DownloadFileRequest::class => new DownloadFileFixture,
+        LogInToVaultRequest::class => MockResponse::fixture('download-file-login-to-vault'),
+        DownloadFileRequest::class => MockResponse::fixture('download-file'),
     ]);
 
     $this->config = new ConfigWithCredentials(
