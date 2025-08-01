@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace CodebarAg\MFiles\Requests;
 
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Data\MultipartValue;
 use Saloon\Enums\Method;
@@ -19,15 +21,7 @@ class UploadFileRequest extends Request implements HasBody
     public function __construct(
         public string $fileContent,
         public string $fileName,
-    ) {
-        if (empty($this->fileContent)) {
-            throw new \InvalidArgumentException('File content is required');
-        }
-
-        if (empty($this->fileName)) {
-            throw new \InvalidArgumentException('File name is required');
-        }
-    }
+    ) {}
 
     public function resolveEndpoint(): string
     {
@@ -48,11 +42,9 @@ class UploadFileRequest extends Request implements HasBody
     public function createDtoFromResponse(\Saloon\Http\Response $response): array
     {
         $data = $response->json();
-
-        $data['Title'] = \Illuminate\Support\Str::beforeLast($this->fileName, '.');
-        $data['Extension'] = \Illuminate\Support\Str::afterLast($this->fileName, '.');
-
-        unset($data['FileInformationType']);
+        $data = Arr::add($data, 'Title', Str::beforeLast($this->fileName, '.'));
+        $data = Arr::add($data, 'Extension', Str::afterLast($this->fileName, '.'));
+        Arr::forget($data, 'FileInformationType');
 
         return $data;
     }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace CodebarAg\MFiles\DTO;
 
 use CodebarAg\MFiles\Enums\MFDataTypeEnum;
-use Illuminate\Support\Arr;
 
 final class PropertyValue
 {
@@ -13,42 +12,54 @@ final class PropertyValue
         public readonly int $propertyDef,
         public readonly MFDataTypeEnum $dataType,
         public readonly mixed $value,
-        public readonly ?array $lookup = null,
-        public readonly ?array $lookups = null,
     ) {}
 
-    public static function fromArray(array $data): self
+    public static function fromArray(int $propertyDef, MFDataTypeEnum $dataType, mixed $value): self
     {
-        $typedValue = Arr::get($data, 'TypedValue', []);
-        $dataTypeId = Arr::get($typedValue, 'DataType', 0);
-        $dataType = MFDataTypeEnum::tryFrom($dataTypeId) ?? MFDataTypeEnum::UNINITIALIZED;
-
         return new self(
-            propertyDef: Arr::get($data, 'PropertyDef'),
+            propertyDef: $propertyDef,
             dataType: $dataType,
-            value: Arr::get($typedValue, 'Value'),
-            lookup: Arr::get($typedValue, 'Lookup'),
-            lookups: Arr::get($typedValue, 'Lookups'),
+            value: $value,
         );
     }
 
     public function toArray(): array
     {
-        $typedValue = [
-            'DataType' => $this->dataType->value,
-        ];
-
-        if ($this->lookup !== null) {
-            $typedValue['Lookup'] = $this->lookup;
-        } elseif ($this->lookups !== null) {
-            $typedValue['Lookups'] = $this->lookups;
-        } else {
-            $typedValue['Value'] = $this->value;
-        }
-
-        return [
-            'PropertyDef' => $this->propertyDef,
-            'TypedValue' => $typedValue,
-        ];
+        return match ($this->dataType) {
+            MFDataTypeEnum::TEXT,  MFDataTypeEnum::DATE,  MFDataTypeEnum::TIMESTAMP,  MFDataTypeEnum::BOOLEAN,  MFDataTypeEnum::MULTILINETEXT => [
+                'PropertyDef' => $this->propertyDef,
+                'TypedValue' => [
+                    'DataType' => $this->dataType->value,
+                    'Value' => $this->value,
+                ],
+            ],
+            MFDataTypeEnum::LOOKUP => [
+                'PropertyDef' => $this->propertyDef,
+                'TypedValue' => [
+                    'DataType' => 9,
+                    'Lookup' => [
+                        'Item' => $this->value,
+                        'Version' => -1,
+                    ],
+                ],
+            ],
+            MFDataTypeEnum::MULTISELECTLOOKUP => [
+                'PropertyDef' => $this->propertyDef,
+                'TypedValue' => [
+                    'DataType' => 10,
+                    'Lookups' => collect((array) $this->value)->map(fn (mixed $item) => [
+                        'Item' => $item,
+                        'Version' => -1,
+                    ])->values()->all(),
+                ],
+            ],
+            default => [
+                'PropertyDef' => $this->propertyDef,
+                'TypedValue' => [
+                    'DataType' => $this->dataType->value,
+                    'Value' => $this->value,
+                ],
+            ],
+        };
     }
 }
