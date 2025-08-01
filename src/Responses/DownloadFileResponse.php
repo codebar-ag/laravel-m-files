@@ -17,10 +17,11 @@ final class DownloadFileResponse
         $contentDisposition = $headers->get('Content-Disposition', '');
         $fileName = self::extractFilenameFromContentDisposition($contentDisposition);
         $fileExtension = $fileName ? pathinfo($fileName, PATHINFO_EXTENSION) : null;
+        $fileNameWithoutExtension = $fileName ? pathinfo($fileName, PATHINFO_FILENAME) : null;
 
         return new DownloadedFile(
             content: $response->body(),
-            name: $fileName,
+            name: $fileNameWithoutExtension,
             extension: $fileExtension,
             size: $fileSize,
             contentType: $fileContentType,

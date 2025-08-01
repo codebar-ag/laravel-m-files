@@ -3,6 +3,7 @@
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/codebar-ag/laravel-m-files.svg?style=flat-square)](https://packagist.org/packages/codebar-ag/laravel-m-files)
 [![GitHub-Tests](https://github.com/codebar-ag/laravel-m-files/actions/workflows/run-tests.yml/badge.svg?branch=main)](https://github.com/codebar-ag/laravel-m-files/actions/workflows/run-tests.yml)
 [![GitHub Code Style](https://github.com/codebar-ag/laravel-m-files/actions/workflows/fix-php-code-style-issues.yml/badge.svg?branch=main)](https://github.com/codebar-ag/laravel-m-files/actions/workflows/fix-php-code-style-issues.yml)
+[![Larastan](https://img.shields.io/badge/Larastan-Level%208-brightgreen.svg)](https://github.com/larastan/larastan)
 [![Total Downloads](https://img.shields.io/packagist/dt/codebar-ag/laravel-m-files.svg?style=flat-square)](https://packagist.org/packages/codebar-ag/laravel-m-files)
 
 # Laravel M-Files Integration
@@ -60,39 +61,18 @@ $config = new ConfigWithCredentials();
 $connector = new MFilesConnector(config: $config);
 ```
 
-### Multi-Tenant Authentication
-
-For applications that need to connect to multiple M-Files instances:
+### Authentication
 
 ```php
-use CodebarAg\MFiles\Connectors\MFilesConnector;
-use CodebarAg\MFiles\DTO\Config\ConfigWithCredentials;
+use CodebarAg\MFiles\Requests\LogInToVaultRequest;
+use CodebarAg\MFiles\DTO\AuthenticationToken;
 
-$config = new ConfigWithCredentials(
+$request = new LogInToVaultRequest(
     url: 'https://your-mfiles-server.com',
+    vaultGuid: '{ABC0DE2G-3HW-QWCQ-SDF3-WERWETWETW}',
     username: 'your-username',
     password: 'your-password',
     cacheDriver: 'file',
-    vaultGuid: '{ABC0DE2G-3HW-QWCQ-SDF3-WERWETWETW}',
-    authenticationToken: null // Optional to handle authentication manually
-);
-
-$connector = new MFilesConnector(config: $config);
-```
-
-> **Note**: By default authentication is handled automatically. To disable this, pass `authenticationToken: null` to the ConfigWithCredentials DTO.
-
-### Manual Authentication
-
-```php
-use CodebarAg\MFiles\Requests\Authentication\GetAuthenticationToken;
-use CodebarAg\MFiles\DTO\AuthenticationToken;
-
-$request = new GetAuthenticationToken(
-    url: 'https://your-mfiles-server.com',
-    username: 'your-username',
-    password: 'your-password',
-    vaultGuid: '{ABC0DE2G-3HW-QWCQ-SDF3-WERWETWETW}',
 );
 
 $token = $request->send()->dto();
@@ -112,19 +92,19 @@ $logout = (new LogOutFromVaultRequest(config: $config))->send()->dto();
 
 ### Authentication Requests
 
-#### GetAuthenticationToken
+#### LogInToVaultRequest
 
 Gets an authentication token using username/password credentials.
 
 **Request:**
 ```php
-use CodebarAg\MFiles\Requests\Authentication\GetAuthenticationToken;
+use CodebarAg\MFiles\Requests\LogInToVaultRequest;
 
-$request = new GetAuthenticationToken(
+$request = new LogInToVaultRequest(
     url: 'https://your-mfiles-server.com',
+    vaultGuid: '{ABC0DE2G-3HW-QWCQ-SDF3-WERWETWETW}',
     username: 'your-username',
     password: 'your-password',
-    vaultGuid: '{ABC0DE2G-3HW-QWCQ-SDF3-WERWETWETW}',
 );
 ```
 
@@ -142,7 +122,7 @@ Logs out from the vault and clears the cached authentication token.
 
 **Request:**
 ```php
-use CodebarAg\MFiles\Requests\Authentication\LogOutFromVaultRequest;
+use CodebarAg\MFiles\Requests\LogOutFromVaultRequest;
 
 $request = new LogOutFromVaultRequest(config: $config);
 ```
@@ -323,11 +303,10 @@ Represents M-Files configuration with authentication credentials.
 
 **Properties:**
 - `url` (string) - M-Files server URL
+- `vaultGuid` (string) - Vault GUID
 - `username` (string) - M-Files username
 - `password` (string) - M-Files password
-- `vaultGuid` (string) - Vault GUID
 - `cacheDriver` (string) - Cache driver for tokens
-- `authenticationToken` (?string) - Optional manual authentication token
 
 **Usage:**
 ```php

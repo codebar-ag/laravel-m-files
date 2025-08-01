@@ -47,7 +47,7 @@ final class PropertyValue
                 'PropertyDef' => $this->propertyDef,
                 'TypedValue' => [
                     'DataType' => 10,
-                    'Lookups' => collect((array) $this->value)->map(fn (mixed $item) => [
+                    'Lookups' => collect($this->value)->map(fn (mixed $item) => [
                         'Item' => $item,
                         'Version' => -1,
                     ])->values()->all(),

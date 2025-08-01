@@ -58,10 +58,6 @@ class LogInToVaultRequest extends SoloRequest implements HasBody
     {
         $responseData = $response->json();
 
-        if (! is_array($responseData)) {
-            throw new \InvalidArgumentException('Invalid response format: expected array');
-        }
-
         $value = Arr::get($responseData, 'Value');
         if (empty($value)) {
             throw new \InvalidArgumentException('Authentication token value not found in response');

@@ -30,13 +30,13 @@ test('can upload file', function () {
     $fileContent = file_get_contents($filePath);
     $fileName = 'test-1.pdf';
 
-    $resonse = $connector->send(new UploadFileRequest(
+    $response = $connector->send(new UploadFileRequest(
         fileContent: $fileContent,
         fileName: $fileName
     ));
 
-    expect(Arr::get($resonse->dto(), 'UploadID'))->toBe(1);
-    expect(Arr::get($resonse->dto(), 'Size'))->toBe(8785);
-    expect(Arr::get($resonse->dto(), 'Title'))->toBe('test-1');
-    expect(Arr::get($resonse->dto(), 'Extension'))->toBe('pdf');
+    expect(Arr::get($response->dto(), 'UploadID'))->toBe(1);
+    expect(Arr::get($response->dto(), 'Size'))->toBe(8785);
+    expect(Arr::get($response->dto(), 'Title'))->toBe('test-1');
+    expect(Arr::get($response->dto(), 'Extension'))->toBe('pdf');
 })->group('upload-file');

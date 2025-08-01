@@ -192,15 +192,14 @@ class PropertyValueTest extends TestCase
         $propertyValue = new PropertyValue($propertyDef, $dataType, $value);
         $result = $propertyValue->toArray();
 
-        // When casting a collection to array, it creates an array with numeric keys
-        // The collect() then iterates over this array, creating unexpected structure
+        // Collection should be properly converted to array of individual items
         $expected = [
             'PropertyDef' => $propertyDef,
             'TypedValue' => [
                 'DataType' => 10,
                 'Lookups' => [
-                    ['Item' => [201, 202], 'Version' => -1],
-                    ['Item' => false, 'Version' => -1],
+                    ['Item' => 201, 'Version' => -1],
+                    ['Item' => 202, 'Version' => -1],
                 ],
             ],
         ];

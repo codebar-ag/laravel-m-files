@@ -26,7 +26,10 @@ class CacheKeyManager
     }
 
     /**
-     * Get authentication token from cache
+     * Retrieves the authentication token from the cache.
+     *
+     * @return mixed Returns the authentication token (type depends on what was stored),
+     *               or null if no token is found in the cache.
      */
     public function getAuthToken(): mixed
     {
@@ -61,7 +64,7 @@ class CacheKeyManager
     /**
      * Remember authentication token with callback
      */
-    public function rememberAuthToken(int $ttl, callable $callback): mixed
+    public function rememberAuthToken(int $ttl, \Closure $callback): mixed
     {
         $key = $this->getAuthKey();
 
