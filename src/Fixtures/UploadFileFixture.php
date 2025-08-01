@@ -15,7 +15,13 @@ class UploadFileFixture extends Fixture
 
     protected function defineSensitiveHeaders(): array
     {
-        return [];
+        if (! env('SALOON_FIXTURE_REDACTION', true)) {
+            return [];
+        }
+
+        return [
+            'Set-Cookie' => 'REDACTED',
+        ];
     }
 
     protected function defineSensitiveJsonParameters(): array

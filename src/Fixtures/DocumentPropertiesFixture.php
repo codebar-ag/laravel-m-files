@@ -15,7 +15,13 @@ class DocumentPropertiesFixture extends Fixture
 
     protected function defineSensitiveHeaders(): array
     {
-        return [];
+        if (! env('SALOON_FIXTURE_REDACTION', true)) {
+            return [];
+        }
+
+        return [
+            'Set-Cookie' => 'REDACTED',
+        ];
     }
 
     protected function defineSensitiveJsonParameters(): array
@@ -25,6 +31,12 @@ class DocumentPropertiesFixture extends Fixture
 
     protected function defineSensitiveRegexPatterns(): array
     {
-        return [];
+        if (! env('SALOON_FIXTURE_REDACTION', true)) {
+            return [];
+        }
+
+        return [
+            '/Fehlerreferenz-ID: [a-f0-9-]{36}/' => 'Fehlerreferenz-ID: REDACTED-ERROR-ID',
+        ];
     }
 }

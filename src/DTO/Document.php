@@ -44,7 +44,7 @@ final class Document
         return new self(
             id: Arr::get($data, 'ObjVer.ID') ?: Arr::get($data, 'ID'),
             title: Arr::get($data, 'Title'),
-            objectType: $objVerType && $objVerType !== 0 ? (string) $objVerType : Arr::get($data, 'ObjectType'),
+            objectType: $objVerType && $objVerType != 0 ? (string) $objVerType : Arr::get($data, 'ObjectType'),
             objectTypeId: $objVerType !== null ? $objVerType : Arr::get($data, 'ObjectTypeID'),
             version: $objVerVersion ? (string) $objVerVersion : Arr::get($data, 'Version'),
             created: $created ? CarbonImmutable::parse($created) : null,
