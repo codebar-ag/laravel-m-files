@@ -1,0 +1,18 @@
+{
+    "statusCode": 200,
+    "headers": {
+        "Cache-Control": "private, must-revalidate, max-age=0",
+        "Content-Type": "application\/json; charset=utf-8",
+        "Expires": "Wed, 31 Jul 2024 15:39:56 GMT",
+        "X-Frame-Options": "SAMEORIGIN",
+        "Content-Security-Policy": "default-src 'none'; object-src 'self'; script-src 'unsafe-inline' 'unsafe-eval' 'self' blob: https:\/\/js.monitor.azure.com; style-src 'unsafe-inline' 'self'; font-src 'self' data:; connect-src 'self' https:\/\/northeurope-0.in.applicationinsights.azure.com https:\/\/js.monitor.azure.com; img-src 'self' blob: data:; manifest-src 'self'; form-action 'self' javascript:; frame-src * blob:; frame-ancestors 'self';",
+        "Set-Cookie": "ASP.NET_SessionId=xnbnuprtw0ge2oiydshgu5ta; path=\/; secure; HttpOnly; SameSite=Lax",
+        "X-XSS-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains;",
+        "Date": "Fri, 01 Aug 2025 15:39:56 GMT",
+        "Content-Length": "354"
+    },
+    "data": "{\"Value\":\"U49AU46nl2BAY4SyF9GuQlhKRIKQPn5t6WC5jZdDlYhlHvUtkLxkI3ECmVGKZkSGM_TcGPy_6WW4eHtVagqADpFBfuGFDZ2MkhAsO4YZxy326mfWhaefQoyRS5IVp3FhEDud1FcRt0CJ0NcjoZO2ZIoAxvL--9iutv54PD89nPzRW3WbSfr4y_D4MCxkbxZZ3_VGI6zQiNoa7cXAY0BXN2s31kABg1J9aayr4SOCkNXezyYSWx7PyLXDHxel4udHaosx6pQmYgU_0aLEN1oRNbqsPiRzyPzG338GzvVCDME_4cvVHnwQPptH2uHuz9XmqSUt4fqjTqyxOOHdCIH5xQ\"}",
+    "context": []
+}

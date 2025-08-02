@@ -1,0 +1,18 @@
+{
+    "statusCode": 200,
+    "headers": {
+        "Cache-Control": "private, must-revalidate, max-age=0",
+        "Content-Type": "application\/json; charset=utf-8",
+        "Expires": "Wed, 31 Jul 2024 15:31:28 GMT",
+        "X-Frame-Options": "SAMEORIGIN",
+        "Content-Security-Policy": "default-src 'none'; object-src 'self'; script-src 'unsafe-inline' 'unsafe-eval' 'self' blob: https:\/\/js.monitor.azure.com; style-src 'unsafe-inline' 'self'; font-src 'self' data:; connect-src 'self' https:\/\/northeurope-0.in.applicationinsights.azure.com https:\/\/js.monitor.azure.com; img-src 'self' blob: data:; manifest-src 'self'; form-action 'self' javascript:; frame-src * blob:; frame-ancestors 'self';",
+        "Set-Cookie": "ASP.NET_SessionId=yswp5namk3a3v1ted0kspjch; path=\/; secure; HttpOnly; SameSite=Lax",
+        "X-XSS-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains;",
+        "Date": "Fri, 01 Aug 2025 15:31:28 GMT",
+        "Content-Length": "50"
+    },
+    "data": "{\"UploadID\":1,\"Size\":8785,\"FileInformationType\":0}",
+    "context": []
+}

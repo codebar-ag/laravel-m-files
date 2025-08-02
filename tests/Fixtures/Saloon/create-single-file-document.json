@@ -1,0 +1,18 @@
+{
+    "statusCode": 200,
+    "headers": {
+        "Cache-Control": "private, must-revalidate, max-age=0",
+        "Content-Type": "application\/json; charset=utf-8",
+        "Expires": "Wed, 31 Jul 2024 15:31:28 GMT",
+        "X-Frame-Options": "SAMEORIGIN",
+        "Content-Security-Policy": "default-src 'none'; object-src 'self'; script-src 'unsafe-inline' 'unsafe-eval' 'self' blob: https:\/\/js.monitor.azure.com; style-src 'unsafe-inline' 'self'; font-src 'self' data:; connect-src 'self' https:\/\/northeurope-0.in.applicationinsights.azure.com https:\/\/js.monitor.azure.com; img-src 'self' blob: data:; manifest-src 'self'; form-action 'self' javascript:; frame-src * blob:; frame-ancestors 'self';",
+        "Set-Cookie": "ASP.NET_SessionId=wzacaedvypf2mnd03f0wvajy; path=\/; secure; HttpOnly; SameSite=Lax",
+        "X-XSS-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains;",
+        "Date": "Fri, 01 Aug 2025 15:31:28 GMT",
+        "Content-Length": "1613"
+    },
+    "data": "{\"Title\":\"test-1\",\"EscapedTitleWithID\":\"test-1 (ID 1102).pdf\",\"DisplayID\":\"1102\",\"ObjVer\":{\"Version\":1,\"VersionType\":4,\"ID\":1102,\"Type\":0},\"Class\":207,\"CheckedOutAtUtc\":\"1601-01-01T00:00:00Z\",\"CheckedOutAt\":\"1601-01-01T00:00:00Z\",\"LastModifiedUtc\":\"2025-08-01T15:31:28Z\",\"LastModified\":\"2025-08-01T15:31:28Z\",\"ObjectCheckedOut\":false,\"ObjectCheckedOutToThisUser\":false,\"CheckedOutTo\":0,\"SingleFile\":true,\"HasRelationshipsFrom\":false,\"HasRelationshipsTo\":false,\"HasRelationshipsFromThis\":false,\"HasRelationshipsToThis\":false,\"HasAssignments\":false,\"Deleted\":false,\"IsStub\":false,\"ThisVersionLatestToThisUser\":true,\"CreatedUtc\":\"2025-08-01T15:31:28Z\",\"Created\":\"2025-08-01T15:31:28Z\",\"Files\":[{\"Name\":\"test-1\",\"EscapedName\":\"test-1.pdf\",\"Extension\":\"pdf\",\"Size\":8785,\"LastModified\":\"2025-08-01T15:31:28Z\",\"ChangeTimeUtc\":\"2025-08-01T15:31:28Z\",\"ChangeTime\":\"2025-08-01T15:31:28Z\",\"CreatedUtc\":\"2025-08-01T15:31:28Z\",\"CreatedDisplayValue\":\"01.08.2025 15:31\",\"LastModifiedDisplayValue\":\"01.08.2025 15:31\",\"FileGUID\":\"{E6BCFF7C-F7C2-4C37-80FF-6A2D06F4CADD}\",\"ID\":1123,\"Version\":1,\"FileVersionType\":3}],\"VisibleAfterOperation\":true,\"PathInIDView\":\"0\\\\1-1000\\\\1102\\\\S\\\\v1\",\"LastModifiedDisplayValue\":\"01.08.2025 15:31\",\"CheckedOutAtDisplayValue\":\"01.01.1601 00:00\",\"CreatedDisplayValue\":\"01.08.2025 15:31\",\"ObjectVersionFlags\":0,\"Score\":0,\"LastAccessedByMe\":\"2025-08-01T15:31:28Z\",\"AccessedByMeUtc\":\"2025-08-01T15:31:28Z\",\"AccessedByMe\":\"2025-08-01T15:31:28Z\",\"ObjectGUID\":\"{C8A6ECD4-A27E-4F4D-8D0D-6FFE4FCBCCB5}\",\"ObjectCapabilityFlags\":-1,\"ObjectFlags\":68,\"propertyID\":0,\"LatestCheckedInVersion\":1,\"BaseProperties\":[]}",
+    "context": []
+}
