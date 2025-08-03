@@ -14,7 +14,7 @@ use Saloon\Laravel\Facades\Saloon;
 test('can set properties using object type and object id', function () {
 
     Saloon::fake([
-        LogInToVaultRequest::class => MockResponse::fixture('set-properties-login-object'),
+        LogInToVaultRequest::class => MockResponse::fixture('set-properties-login-to-vault'),
         SetPropertiesRequest::class => MockResponse::fixture('set-properties'),
     ]);
 
@@ -35,8 +35,6 @@ test('can set properties using object type and object id', function () {
         new SetProperty(1856, MFDataTypeEnum::BOOLEAN, true),
     ];
 
-    dd(collect($propertyValues)->map(fn (SetProperty $propertyValue) => $propertyValue->toArray())->toArray());
-
     $request = new SetPropertiesRequest(
         $objectType,
         $objectId,
@@ -46,6 +44,7 @@ test('can set properties using object type and object id', function () {
 
     $response = $connector->send($request);
 
+    ray($response->status(), $response->json());
     expect($response->status())->toBe(200);
 
 })->group('set-properties');

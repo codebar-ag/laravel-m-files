@@ -221,6 +221,73 @@ $downloadedFile = $connector->send($request)->dto();
 // Returns DownloadedFile DTO with content, name, extension, size, contentType
 ```
 
+### Property Requests
+
+#### GetObjectInformationRequest
+
+Retrieves object information and properties from M-Files.
+
+**Constructor Parameters:**
+- `objectType` (int) - Object type ID
+- `objectId` (int) - Object ID
+- `objectVersion` (int) - Object version
+
+**Request:**
+```php
+use CodebarAg\MFiles\Requests\GetObjectInformationRequest;
+
+$request = new GetObjectInformationRequest(
+    objectType: 0,
+    objectId: 123,
+    objectVersion: 1
+);
+```
+
+**Response:**
+```php
+use CodebarAg\MFiles\DTO\ObjectProperties;
+
+$objectProperties = $connector->send($request)->dto();
+// Returns ObjectProperties DTO with object information and properties
+```
+
+#### SetPropertiesRequest
+
+Sets properties for an existing object in M-Files.
+
+**Constructor Parameters:**
+- `objectType` (int) - Object type ID
+- `objectId` (int) - Object ID
+- `objectVersion` (int) - Object version (-1 for latest)
+- `propertyValues` (array) - Array of SetProperty objects
+
+**Request:**
+```php
+use CodebarAg\MFiles\Requests\SetPropertiesRequest;
+use CodebarAg\MFiles\DTO\SetProperty;
+use CodebarAg\MFiles\Enums\MFDataTypeEnum;
+
+$propertyValues = [
+    new SetProperty(1856, MFDataTypeEnum::BOOLEAN, true),
+    new SetProperty(0, MFDataTypeEnum::TEXT, 'Updated Title'),
+];
+
+$request = new SetPropertiesRequest(
+    objectType: 140,
+    objectId: 1770,
+    objectVersion: -1,
+    propertyValues: $propertyValues
+);
+```
+
+**Response:**
+```php
+use CodebarAg\MFiles\DTO\ObjectProperties;
+
+$objectProperties = $connector->send($request)->dto();
+// Returns ObjectProperties DTO with updated object information
+```
+
 ## DTOs
 
 ### Configuration DTOs
