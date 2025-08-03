@@ -1,0 +1,17 @@
+{
+    "statusCode": 403,
+    "headers": {
+        "Cache-Control": "private",
+        "Content-Type": "application\/json; charset=utf-8",
+        "X-Frame-Options": "SAMEORIGIN",
+        "Content-Security-Policy": "default-src 'none'; object-src 'self'; script-src 'unsafe-inline' 'unsafe-eval' 'self' blob: https:\/\/js.monitor.azure.com; style-src 'unsafe-inline' 'self'; font-src 'self' data:; connect-src 'self' https:\/\/northeurope-0.in.applicationinsights.azure.com https:\/\/js.monitor.azure.com; img-src 'self' blob: data:; manifest-src 'self'; form-action 'self' javascript:; frame-src * blob:; frame-ancestors 'self';",
+        "Set-Cookie": "ASP.NET_SessionId=hahkg1kz1odpkfinvtnklebp; path=\/; secure; HttpOnly; SameSite=Lax",
+        "X-XSS-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains;",
+        "Date": "Sun, 03 Aug 2025 23:18:24 GMT",
+        "Content-Length": "355"
+    },
+    "data": "{\"Status\":403,\"URL\":\"\/objects\/140\/1770\/-1\/properties\",\"Method\":\"POST\",\"Exception\":{\"Name\":\"UnauthorizedAccessException\",\"Message\":\"Login to vault failed\"},\"Stack\":\"Fehlerreferenz-ID: 7711f393-7388-43f6-861b-1c64ae130808\",\"Message\":\"Login to vault failed\",\"IsLoggedToVault\":false,\"IsLoggedToApplication\":false,\"ExceptionName\":\"UnauthorizedAccessException\"}",
+    "context": []
+}

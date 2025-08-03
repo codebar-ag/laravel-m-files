@@ -28,11 +28,18 @@ final class SetProperty
     public function toArray(): array
     {
         return match ($this->dataType) {
-            MFDataTypeEnum::TEXT,  MFDataTypeEnum::DATE,  MFDataTypeEnum::TIMESTAMP,  MFDataTypeEnum::BOOLEAN,  MFDataTypeEnum::MULTILINETEXT => [
+            MFDataTypeEnum::TEXT,  MFDataTypeEnum::DATE,  MFDataTypeEnum::TIMESTAMP,  MFDataTypeEnum::MULTILINETEXT => [
                 'PropertyDef' => $this->propertyDef,
                 'TypedValue' => [
                     'DataType' => $this->dataType->value,
                     'Value' => $this->value,
+                ],
+            ],
+            MFDataTypeEnum::BOOLEAN => [
+                'PropertyDef' => $this->propertyDef,
+                'TypedValue' => [
+                    'DataType' => $this->dataType->value,
+                    'Value' => (bool) $this->value,
                 ],
             ],
             MFDataTypeEnum::LOOKUP => [
@@ -40,7 +47,7 @@ final class SetProperty
                 'TypedValue' => [
                     'DataType' => 9,
                     'Lookup' => [
-                        'Item' => $this->value,
+                        'Item' => filled($this->value) ? (int) $this->value : null,
                         'Version' => -1,
                     ],
                 ],
@@ -50,7 +57,7 @@ final class SetProperty
                 'TypedValue' => [
                     'DataType' => 10,
                     'Lookups' => collect($this->value)->map(fn (mixed $item) => [
-                        'Item' => $item,
+                        'Item' => filled($item) ? (int) $item : null,
                         'Version' => -1,
                     ])->values()->all(),
                 ],

@@ -36,7 +36,7 @@ class MFilesConnector extends Connector
     {
         $cacheManager = new CacheKeyManager($this->configuration);
 
-        return $cacheManager->rememberAuthToken(3600, function () {
+        return $cacheManager->rememberAuthToken(1, function () {
             $request = new LogInToVaultRequest(
                 url: $this->configuration->url,
                 vaultGuid: $this->configuration->vaultGuid,
