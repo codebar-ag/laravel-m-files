@@ -39,7 +39,7 @@ class CreateSingleFileDocumentRequest extends Request implements HasBody
                 ->map(fn (SetProperty $propertyValue) => $propertyValue->toArray())
                 ->values()
                 ->toArray(),
-            'Files' => $this->files,
+            'Files' => [$this->files],
         ];
     }
 
