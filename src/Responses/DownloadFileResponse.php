@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace CodebarAg\MFiles\Responses;
 
 use CodebarAg\MFiles\DTO\DownloadedFile;
+use CodebarAg\MFiles\Exceptions\MFilesErrorException;
 use Saloon\Http\Response;
 
 final class DownloadFileResponse
 {
     public static function createDtoFromResponse(Response $response): DownloadedFile
     {
+        if (! $response->successful()) {
+            throw new MFilesErrorException(ErrorResponse::createDtoFromResponse($response));
+        }
         $headers = $response->headers();
         $fileContentType = $headers->get('Content-Type');
         $fileSize = (int) $headers->get('Content-Length', 0);
