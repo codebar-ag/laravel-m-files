@@ -12,6 +12,7 @@ final class MFilesErrorException extends BaseException
     public function __construct(
         public readonly MFilesError $error
     ) {
-        parent::__construct($error->message, $error->status);
+        parent::__construct($error->exceptionMessage, $error->status);
     }
 }
+
