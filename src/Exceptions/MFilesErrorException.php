@@ -15,4 +15,3 @@ final class MFilesErrorException extends BaseException
         parent::__construct($error->exceptionMessage, $error->status);
     }
 }
-
