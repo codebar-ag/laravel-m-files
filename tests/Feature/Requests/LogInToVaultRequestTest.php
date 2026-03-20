@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use CodebarAg\MFiles\Requests\LogInToVaultRequest;
 use Saloon\Http\Faking\MockResponse;
+use Saloon\Http\Response;
 use Saloon\Laravel\Facades\Saloon;
 
 test('can login to vault and get authentication token with caching', function () {
@@ -23,7 +24,7 @@ test('can login to vault and get authentication token with caching', function ()
     $token = $response->dto();
 
     // Test that the response is processed correctly
-    expect($response)->toBeInstanceOf(\Saloon\Http\Response::class);
+    expect($response)->toBeInstanceOf(Response::class);
     expect($response->status())->toBe(200);
     expect($token)->toBeString();
     expect($token)->not->toBeEmpty();
