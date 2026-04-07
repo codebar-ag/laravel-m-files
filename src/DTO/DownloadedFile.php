@@ -16,6 +16,9 @@ final class DownloadedFile
         public readonly string $content,
     ) {}
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public static function fromArray(array $data): self
     {
         return new self(
@@ -27,6 +30,9 @@ final class DownloadedFile
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return [
