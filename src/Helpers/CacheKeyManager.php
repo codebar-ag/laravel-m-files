@@ -63,6 +63,8 @@ class CacheKeyManager
 
     /**
      * Remember authentication token with callback
+     *
+     * @param  \Closure(): mixed  $callback
      */
     public function rememberAuthToken(int $ttl, \Closure $callback): mixed
     {

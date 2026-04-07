@@ -16,17 +16,25 @@ final class DownloadedFile
         public readonly string $content,
     ) {}
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public static function fromArray(array $data): self
     {
+        $size = Arr::get($data, 'size');
+
         return new self(
             name: Arr::get($data, 'name'),
             extension: Arr::get($data, 'extension'),
-            size: Arr::get($data, 'size') !== null ? (int) Arr::get($data, 'size') : null,
+            size: $size !== null ? (int) $size : null,
             contentType: Arr::get($data, 'contentType'),
             content: Arr::get($data, 'content', ''),
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return [
