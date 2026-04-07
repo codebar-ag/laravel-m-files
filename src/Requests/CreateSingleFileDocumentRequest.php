@@ -21,6 +21,10 @@ class CreateSingleFileDocumentRequest extends Request implements HasBody
 
     protected Method $method = Method::POST;
 
+    /**
+     * @param  list<array<string, mixed>>  $files
+     * @param  list<SetProperty>  $propertyValues
+     */
     public function __construct(
         public string $title,
         public array $files = [],
@@ -32,6 +36,9 @@ class CreateSingleFileDocumentRequest extends Request implements HasBody
         return '/objects/0';
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function defaultBody(): array
     {
         return [

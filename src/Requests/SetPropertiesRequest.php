@@ -21,6 +21,9 @@ class SetPropertiesRequest extends Request implements HasBody
 
     protected Method $method = Method::POST;
 
+    /**
+     * @param  list<SetProperty>  $propertyValues
+     */
     public function __construct(
         public int $objectType,
         public int $objectId,
@@ -33,6 +36,9 @@ class SetPropertiesRequest extends Request implements HasBody
         return "/objects/{$this->objectType}/{$this->objectId}/latest/properties";
     }
 
+    /**
+     * @return list<array<string, mixed>>
+     */
     protected function defaultBody(): array
     {
         $body = collect($this->propertyValues)->map(fn (SetProperty $propertyValue) => $propertyValue->toArray())->toArray();

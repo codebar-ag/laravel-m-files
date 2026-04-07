@@ -16,8 +16,15 @@ class ConfigWithCredentials
         public string $password,
         public ?string $cacheDriver = null,
         public int $tokenTtlSeconds = 3600,
-    ) {}
+    ) {
+        if ($this->tokenTtlSeconds < 1) {
+            throw new InvalidArgumentException('Config [tokenTtlSeconds] must be at least 1 second.');
+        }
+    }
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public static function fromArray(array $data): self
     {
         return new self(
@@ -34,6 +41,9 @@ class ConfigWithCredentials
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return [
@@ -77,6 +87,10 @@ class ConfigWithCredentials
 
         if (! is_string($value)) {
             throw new InvalidArgumentException("Config [{$key}] must be a string or null.");
+        }
+
+        if ($value === '') {
+            return null;
         }
 
         return $value;

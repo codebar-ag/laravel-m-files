@@ -11,6 +11,9 @@ use Saloon\Http\Response;
 
 final class UploadFileResponse
 {
+    /**
+     * @return array<string, mixed>
+     */
     public static function createDtoFromResponse(Response $response, string $fileName): array
     {
         if (! $response->successful()) {

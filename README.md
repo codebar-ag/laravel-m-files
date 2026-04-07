@@ -20,8 +20,14 @@ composer require codebar-ag/laravel-m-files
 
 ### Requirements
 
-- PHP **8.3+**
-- Laravel **13.x** (the package targets `illuminate/contracts` and `illuminate/support` **^13**)
+#### PHP and Laravel compatibility
+
+| Package release | PHP (Composer constraint) | Laravel |
+|-----------------|---------------------------|---------|
+| **v13.x** | `8.3.*\|8.4.*\|8.5.*` | **^13.0** |
+| **v12.x** | `8.2.*\|8.3.*\|8.4.*` | **^12.0** |
+
+Install a package version whose row matches your application’s PHP and Laravel versions. The **current** major release is **v13.x** (see [Packagist](https://packagist.org/packages/codebar-ag/laravel-m-files) for the exact tag).
 
 ## Configuration
 

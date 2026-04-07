@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace CodebarAg\MFiles\Tests\Unit\DTO;
 
 use Carbon\CarbonImmutable;
+use CodebarAg\MFiles\DTO\File;
+use CodebarAg\MFiles\DTO\GetProperty;
 use CodebarAg\MFiles\DTO\ObjectProperties;
+use CodebarAg\MFiles\Enums\MFDataTypeEnum;
 use CodebarAg\MFiles\Tests\TestCase;
 use Illuminate\Support\Collection;
 
@@ -18,8 +21,10 @@ class ObjectPropertiesTest extends TestCase
         $objectTypeId = 0;
         $objectVersionId = 1;
         $lastModifiedAt = CarbonImmutable::parse('2023-01-01T10:00:00Z');
-        $properties = collect([]);
-        $files = collect([]);
+        /** @var Collection<int, GetProperty> $properties */
+        $properties = collect();
+        /** @var Collection<int, File> $files */
+        $files = collect();
 
         $objectProperties = new ObjectProperties(
             $classId,
@@ -77,9 +82,7 @@ class ObjectPropertiesTest extends TestCase
         $this->assertEquals(2, $objectProperties->objectVersionId);
         $this->assertInstanceOf(CarbonImmutable::class, $objectProperties->lastModifiedAt);
         $this->assertEquals('2023-01-02T11:00:00.000000Z', $objectProperties->lastModifiedAt->toISOString());
-        $this->assertInstanceOf(Collection::class, $objectProperties->properties);
         $this->assertEquals(1, $objectProperties->properties->count());
-        $this->assertInstanceOf(Collection::class, $objectProperties->files);
         $this->assertEquals(1, $objectProperties->files->count());
     }
 
@@ -103,9 +106,7 @@ class ObjectPropertiesTest extends TestCase
         $this->assertEquals(1, $objectProperties->objectVersionId);
         $this->assertInstanceOf(CarbonImmutable::class, $objectProperties->lastModifiedAt);
         $this->assertEquals('2023-01-03T12:00:00.000000Z', $objectProperties->lastModifiedAt->toISOString());
-        $this->assertInstanceOf(Collection::class, $objectProperties->properties);
         $this->assertEquals(0, $objectProperties->properties->count());
-        $this->assertInstanceOf(Collection::class, $objectProperties->files);
         $this->assertEquals(0, $objectProperties->files->count());
     }
 
@@ -161,17 +162,17 @@ class ObjectPropertiesTest extends TestCase
         $this->assertEquals(3, $objectProperties->objectVersionId);
         $this->assertInstanceOf(CarbonImmutable::class, $objectProperties->lastModifiedAt);
         $this->assertEquals('2023-01-04T13:00:00.000000Z', $objectProperties->lastModifiedAt->toISOString());
-        $this->assertInstanceOf(Collection::class, $objectProperties->properties);
         $this->assertEquals(2, $objectProperties->properties->count());
-        $this->assertInstanceOf(Collection::class, $objectProperties->files);
         $this->assertEquals(2, $objectProperties->files->count());
     }
 
     public function test_to_array_returns_correct_structure(): void
     {
         $lastModifiedAt = CarbonImmutable::parse('2023-01-01T10:00:00Z');
-        $properties = collect([]);
-        $files = collect([]);
+        /** @var Collection<int, GetProperty> $properties */
+        $properties = collect();
+        /** @var Collection<int, File> $files */
+        $files = collect();
 
         $objectProperties = new ObjectProperties(
             1,
@@ -202,20 +203,10 @@ class ObjectPropertiesTest extends TestCase
     {
         $lastModifiedAt = CarbonImmutable::parse('2023-01-01T10:00:00Z');
         $properties = collect([
-            [
-                'PropertyDef' => 1,
-                'Value' => 'Test Property',
-                'DisplayValue' => 'Test Display',
-            ],
+            new GetProperty(1, MFDataTypeEnum::TEXT, 'Test Property', 'Test Display'),
         ]);
         $files = collect([
-            [
-                'id' => 456,
-                'name' => 'test.pdf',
-                'extension' => 'pdf',
-                'version' => 1,
-                'size' => 1024,
-            ],
+            new File(456, 'test.pdf', 'pdf', 1, 1024),
         ]);
 
         $objectProperties = new ObjectProperties(
@@ -244,8 +235,10 @@ class ObjectPropertiesTest extends TestCase
     public function test_properties_are_readonly(): void
     {
         $lastModifiedAt = CarbonImmutable::parse('2023-01-01T10:00:00Z');
-        $properties = collect([]);
-        $files = collect([]);
+        /** @var Collection<int, GetProperty> $properties */
+        $properties = collect();
+        /** @var Collection<int, File> $files */
+        $files = collect();
 
         $objectProperties = new ObjectProperties(
             1,

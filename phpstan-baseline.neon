@@ -1,61 +1,55 @@
 parameters:
-	ignoreErrors:
-		-
-			message: '#^Call to an undefined method Pest\\PendingCalls\\TestCall\|Pest\\Support\\HigherOrderTapProxy\:\:expect\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: tests/Core/ArchTest.php
+    ignoreErrors:
+        -
+            message: '#^Call to an undefined method Pest\\PendingCalls\\TestCall\|Pest\\Support\\HigherOrderTapProxy\:\:expect\(\)\.$#'
+            identifier: method.notFound
+            count: 1
+            path: tests/Core/ArchTest.php
 
-		-
-			message: '#^Access to an undefined property PHPUnit\\Framework\\TestCase\:\:\$config\.$#'
-			identifier: property.notFound
-			count: 1
-			path: tests/Feature/Requests/DownloadFileRequestTest.php
+        -
+            message: '#^Access to an undefined property PHPUnit\\Framework\\TestCase\:\:\$config\.$#'
+            identifier: property.notFound
+            count: 1
+            path: tests/Feature/Requests/DownloadFileRequestTest.php
 
-		-
-			message: '#^Access to an undefined property PHPUnit\\Framework\\TestCase\:\:\$connector\.$#'
-			identifier: property.notFound
-			count: 1
-			path: tests/Feature/Requests/DownloadFileRequestTest.php
+        -
+            message: '#^Access to an undefined property PHPUnit\\Framework\\TestCase\:\:\$connector\.$#'
+            identifier: property.notFound
+            count: 1
+            path: tests/Feature/Requests/DownloadFileRequestTest.php
 
-		-
-			message: '#^Assign to protected\(set\) property CodebarAg\\MFiles\\DTO\\DownloadedFile\:\:\$content\.$#'
-			identifier: assign.propertyProtectedSet
-			count: 1
-			path: tests/Unit/DTO/DownloadedFileTest.php
+        -
+            message: '#^Assign to protected\(set\) property CodebarAg\\MFiles\\DTO\\DownloadedFile\:\:\$content\.$#'
+            identifier: assign.propertyProtectedSet
+            count: 1
+            path: tests/Unit/DTO/DownloadedFileTest.php
 
-		-
-			message: '#^Assign to protected\(set\) property CodebarAg\\MFiles\\DTO\\File\:\:\$id\.$#'
-			identifier: assign.propertyProtectedSet
-			count: 1
-			path: tests/Unit/DTO/FileTest.php
+        -
+            message: '#^Assign to protected\(set\) property CodebarAg\\MFiles\\DTO\\File\:\:\$id\.$#'
+            identifier: assign.propertyProtectedSet
+            count: 1
+            path: tests/Unit/DTO/FileTest.php
 
-		-
-			message: '#^Assign to protected\(set\) property CodebarAg\\MFiles\\DTO\\ObjectProperties\:\:\$classId\.$#'
-			identifier: assign.propertyProtectedSet
-			count: 1
-			path: tests/Unit/DTO/ObjectPropertiesTest.php
+        -
+            message: '#^Assign to protected\(set\) property CodebarAg\\MFiles\\DTO\\ObjectProperties\:\:\$classId\.$#'
+            identifier: assign.propertyProtectedSet
+            count: 1
+            path: tests/Unit/DTO/ObjectPropertiesTest.php
 
-		-
-			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''Carbon\\\\CarbonImmutable'' and Carbon\\CarbonImmutable will always evaluate to true\.$#'
-			identifier: method.alreadyNarrowedType
-			count: 3
-			path: tests/Unit/DTO/ObjectPropertiesTest.php
+        -
+            message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''Carbon\\\\CarbonImmutable'' and Carbon\\CarbonImmutable will always evaluate to true\.$#'
+            identifier: method.alreadyNarrowedType
+            count: 3
+            path: tests/Unit/DTO/ObjectPropertiesTest.php
 
-		-
-			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''Illuminate\\\\Support\\\\Collection'' and Illuminate\\Support\\Collection will always evaluate to true\.$#'
-			identifier: method.alreadyNarrowedType
-			count: 6
-			path: tests/Unit/DTO/ObjectPropertiesTest.php
+        -
+            message: '#^Access to an undefined property PHPUnit\\Framework\\TestCase\:\:\$cacheManager\.$#'
+            identifier: property.notFound
+            count: 9
+            path: tests/Unit/Helpers/CacheKeyManagerTest.php
 
-		-
-			message: '#^Access to an undefined property PHPUnit\\Framework\\TestCase\:\:\$cacheManager\.$#'
-			identifier: property.notFound
-			count: 9
-			path: tests/Unit/Helpers/CacheKeyManagerTest.php
-
-		-
-			message: '#^Access to an undefined property PHPUnit\\Framework\\TestCase\:\:\$config\.$#'
-			identifier: property.notFound
-			count: 1
-			path: tests/Unit/Helpers/CacheKeyManagerTest.php
+        -
+            message: '#^Access to an undefined property PHPUnit\\Framework\\TestCase\:\:\$config\.$#'
+            identifier: property.notFound
+            count: 1
+            path: tests/Unit/Helpers/CacheKeyManagerTest.php
