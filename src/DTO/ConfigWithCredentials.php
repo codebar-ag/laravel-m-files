@@ -17,9 +17,7 @@ class ConfigWithCredentials
         public ?string $cacheDriver = null,
         public int $tokenTtlSeconds = 3600,
     ) {
-        if ($this->tokenTtlSeconds < 1) {
-            throw new InvalidArgumentException('Config [tokenTtlSeconds] must be at least 1 second.');
-        }
+        $this->tokenTtlSeconds = max(1, $this->tokenTtlSeconds);
     }
 
     /**
@@ -119,10 +117,6 @@ class ConfigWithCredentials
             throw new InvalidArgumentException("Config [{$key}] must be a positive integer.");
         }
 
-        if ($int < 1) {
-            throw new InvalidArgumentException("Config [{$key}] must be at least 1 second.");
-        }
-
-        return $int;
+        return max(1, $int);
     }
 }

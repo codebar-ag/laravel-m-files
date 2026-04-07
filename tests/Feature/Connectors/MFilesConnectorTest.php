@@ -6,6 +6,7 @@ use CodebarAg\MFiles\Connectors\MFilesConnector;
 use CodebarAg\MFiles\DTO\ConfigWithCredentials;
 use CodebarAg\MFiles\Helpers\CacheKeyManager;
 use CodebarAg\MFiles\Requests\LogInToVaultRequest;
+use Illuminate\Support\Arr;
 use Saloon\Http\Faking\MockResponse;
 use Saloon\Laravel\Facades\Saloon;
 
@@ -54,7 +55,7 @@ test('defaultHeaders includes X-Authentication from cached token', function () {
 
     $headers = $connector->defaultHeaders();
 
-    expect($headers['X-Authentication'])->toBe($token);
+    expect(Arr::get($headers, 'X-Authentication'))->toBe($token);
     Saloon::assertSentCount(1);
 })->group('connectors');
 

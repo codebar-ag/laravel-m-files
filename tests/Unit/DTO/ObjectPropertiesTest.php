@@ -10,6 +10,7 @@ use CodebarAg\MFiles\DTO\GetProperty;
 use CodebarAg\MFiles\DTO\ObjectProperties;
 use CodebarAg\MFiles\Enums\MFDataTypeEnum;
 use CodebarAg\MFiles\Tests\TestCase;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 class ObjectPropertiesTest extends TestCase
@@ -221,15 +222,15 @@ class ObjectPropertiesTest extends TestCase
 
         $array = $objectProperties->toArray();
 
-        $this->assertEquals(2, $array['classId']);
-        $this->assertEquals(456, $array['objectId']);
-        $this->assertEquals(1, $array['objectTypeId']);
-        $this->assertEquals(2, $array['objectVersionId']);
-        $this->assertEquals('2023-01-01T10:00:00+00:00', $array['lastModifiedAt']);
-        $this->assertIsArray($array['properties']);
-        $this->assertIsArray($array['files']);
-        $this->assertEquals(1, count($array['properties']));
-        $this->assertEquals(1, count($array['files']));
+        $this->assertEquals(2, Arr::get($array, 'classId'));
+        $this->assertEquals(456, Arr::get($array, 'objectId'));
+        $this->assertEquals(1, Arr::get($array, 'objectTypeId'));
+        $this->assertEquals(2, Arr::get($array, 'objectVersionId'));
+        $this->assertEquals('2023-01-01T10:00:00+00:00', Arr::get($array, 'lastModifiedAt'));
+        $this->assertIsArray(Arr::get($array, 'properties'));
+        $this->assertIsArray(Arr::get($array, 'files'));
+        $this->assertEquals(1, count(Arr::get($array, 'properties', [])));
+        $this->assertEquals(1, count(Arr::get($array, 'files', [])));
     }
 
     public function test_properties_are_readonly(): void

@@ -50,18 +50,20 @@ test('fromArray rejects empty required string', function () {
     ]);
 })->throws(InvalidArgumentException::class, 'Config [url] must be a non-empty string.');
 
-test('fromArray rejects non positive tokenTtlSeconds', function () {
-    ConfigWithCredentials::fromArray([
+test('fromArray clamps tokenTtlSeconds below 1 to 1', function () {
+    $dto = ConfigWithCredentials::fromArray([
         'url' => 'https://a.test',
         'vaultGuid' => 'v',
         'username' => 'u',
         'password' => 'p',
         'tokenTtlSeconds' => 0,
     ]);
-})->throws(InvalidArgumentException::class, 'at least 1 second');
 
-test('constructor rejects tokenTtlSeconds below 1', function () {
-    new ConfigWithCredentials(
+    expect($dto->tokenTtlSeconds)->toBe(1);
+})->group('dto');
+
+test('constructor clamps tokenTtlSeconds below 1 to 1', function () {
+    $dto = new ConfigWithCredentials(
         url: 'https://a.test',
         vaultGuid: 'v',
         username: 'u',
@@ -69,7 +71,9 @@ test('constructor rejects tokenTtlSeconds below 1', function () {
         cacheDriver: null,
         tokenTtlSeconds: 0,
     );
-})->throws(InvalidArgumentException::class, 'Config [tokenTtlSeconds] must be at least 1 second.');
+
+    expect($dto->tokenTtlSeconds)->toBe(1);
+})->group('dto');
 
 test('fromArray treats empty cacheDriver as null', function () {
     $dto = ConfigWithCredentials::fromArray([
