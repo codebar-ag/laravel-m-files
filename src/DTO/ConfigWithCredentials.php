@@ -99,23 +99,17 @@ class ConfigWithCredentials
      */
     private static function optionalPositiveInt(array $data, string $key, int $default): int
     {
-        if (! Arr::has($data, $key)) {
-            return max(1, $default);
-        }
-
         $value = Arr::get($data, $key);
 
         if ($value === null) {
             return max(1, $default);
         }
 
-        if (is_int($value)) {
-            $int = $value;
-        } elseif (is_string($value) && ctype_digit($value)) {
-            $int = (int) $value;
-        } else {
-            throw new InvalidArgumentException("Config [{$key}] must be a positive integer.");
-        }
+        $int = match (true) {
+            is_int($value) => $value,
+            is_string($value) && ctype_digit($value) => (int) $value,
+            default => throw new InvalidArgumentException("Config [{$key}] must be a positive integer."),
+        };
 
         return max(1, $int);
     }
