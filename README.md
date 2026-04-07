@@ -18,6 +18,11 @@ You can install the package via composer:
 composer require codebar-ag/laravel-m-files
 ```
 
+### Requirements
+
+- PHP **8.3+**
+- Laravel **13.x** (the package targets `illuminate/contracts` and `illuminate/support` **^13**)
+
 ## Configuration
 
 Publish the configuration file:
@@ -34,6 +39,8 @@ M_FILES_USERNAME=your-username
 M_FILES_PASSWORD=your-password
 M_FILES_VAULT_GUID=ABC0DE2G-3HW-QWCQ-SDF3-WERWETWETW
 M_FILES_CACHE_DRIVER=file
+M_FILES_EXPIRATION_SECONDS=3600
+# M_FILES_SESSION_ID=   # optional; exposed as config('m-files.auth.session_id') for custom use
 ```
 
 ### Configuration Options
@@ -44,7 +51,9 @@ The package supports the following configuration options:
 - `M_FILES_USERNAME` - Your M-Files username
 - `M_FILES_PASSWORD` - Your M-Files password
 - `M_FILES_VAULT_GUID` - The vault GUID to connect to
-- `M_FILES_CACHE_DRIVER` - Cache driver for storing authentication tokens (default: file)
+- `M_FILES_CACHE_DRIVER` - Cache driver for storing authentication tokens (defaults to `CACHE_DRIVER`, then `file`)
+- `M_FILES_EXPIRATION_SECONDS` - How long to cache the vault authentication token, in seconds (default: `3600`)
+- `M_FILES_SESSION_ID` - Optional; sets `config('m-files.auth.session_id')` (not used by the package’s built-in connector/requests; available for your own integrations)
 
 ## Authentication
 
@@ -61,19 +70,27 @@ $config = new ConfigWithCredentials(
     vaultGuid: '{ABC0DE2G-3HW-QWCQ-SDF3-WERWETWETW}',
     username: 'your-username',
     password: 'your-password',
-    cacheDriver: 'file'
+    cacheDriver: 'file',
+    tokenTtlSeconds: 3600,
 );
 
-$connector = new MFilesConnector(config: $config);
+$connector = new MFilesConnector(configuration: $config);
 ```
 
-### Authentication
+### How the connector authenticates
 
 Authentication is handled automatically by the `MFilesConnector`. When you create a connector instance with your credentials, it will automatically:
 
-1. **Cache authentication tokens** - Tokens are cached for 1 hour to avoid repeated login requests
+1. **Cache authentication tokens** - Tokens are cached for `M_FILES_EXPIRATION_SECONDS` / `config('m-files.auth.expiration')` (default 3600 seconds), or the `tokenTtlSeconds` argument on `ConfigWithCredentials`
 2. **Include authentication headers** - The `X-Authentication` header is automatically added to all requests
-3. **Handle token refresh** - When tokens expire, new ones are automatically obtained
+3. **Handle token refresh** - When the cache entry expires, a new token is obtained on the next request
+
+You can optionally inject a `CacheKeyManager` for tests or custom cache wiring: `new MFilesConnector(configuration: $config, cacheKeyManager: $manager)`.
+
+### Cache and production security
+
+- Auth tokens are stored in your configured **Laravel cache store**. Use a **private** backend in production (not a shared public cache).
+- Cache keys incorporate a hash of connection parameters (including credentials). For **multi-tenant** apps, avoid sharing one cache namespace across tenants; prefer per-tenant key prefixes or separate Redis databases where applicable.
 
 ```php
 use CodebarAg\MFiles\Requests\LogInToVaultRequest;
@@ -301,11 +318,12 @@ Represents M-Files configuration with authentication credentials.
 - `vaultGuid` (string) - Vault GUID
 - `username` (string) - M-Files username
 - `password` (string) - M-Files password
-- `cacheDriver` (string|null) - Cache driver for tokens
+- `cacheDriver` (string|null) - Cache store name for tokens (see `M_FILES_CACHE_DRIVER` / `config('m-files.cache_driver')`)
+- `tokenTtlSeconds` (int) - Cache TTL for the vault token in seconds (default **3600**; must be **≥ 1**)
 
 **Methods:**
-- `fromArray(array $data): self` - Static factory method
-- `toArray(): array` - Converts to array format
+- `fromArray(array $data): self` - Builds from an array; **requires a Laravel app context** so `config('m-files.*')` defaults apply for omitted `cacheDriver` / `tokenTtlSeconds`. Required keys: `url`, `vaultGuid`, `username`, `password` (each a non-empty string). Throws `InvalidArgumentException` if validation fails.
+- `toArray(): array` - Converts to array format (includes `tokenTtlSeconds`)
 
 **Usage:**
 ```php
@@ -313,19 +331,21 @@ use CodebarAg\MFiles\DTO\ConfigWithCredentials;
 
 $config = new ConfigWithCredentials(
     url: 'https://your-mfiles-server.com',
+    vaultGuid: '{ABC0DE2G-3HW-QWCQ-SDF3-WERWETWETW}',
     username: 'your-username',
     password: 'your-password',
-    vaultGuid: '{ABC0DE2G-3HW-QWCQ-SDF3-WERWETWETW}',
-    cacheDriver: 'file'
+    cacheDriver: 'file',
+    tokenTtlSeconds: 3600,
 );
 
-// Using static factory method
+// Using static factory method (inside a Laravel application)
 $config = ConfigWithCredentials::fromArray([
     'url' => 'https://your-mfiles-server.com',
+    'vaultGuid' => '{ABC0DE2G-3HW-QWCQ-SDF3-WERWETWETW}',
     'username' => 'your-username',
     'password' => 'your-password',
-    'vaultGuid' => '{ABC0DE2G-3HW-QWCQ-SDF3-WERWETWETW}',
-    'cacheDriver' => 'file'
+    'cacheDriver' => 'file',
+    'tokenTtlSeconds' => 3600,
 ]);
 ```
 
@@ -541,15 +561,33 @@ $dataTypeValue = $dataType->value; // 1
 composer test
 ```
 
+`composer test` runs Pest with `--no-coverage` so the suite passes without PCOV or Xdebug (PHPUnit is configured with `failOnWarning="true"`, and missing a coverage driver would otherwise fail the run).
+
+Static analysis:
+
+```bash
+composer analyse
+```
+
+To generate a coverage report locally, install and enable [PCOV](https://github.com/krakjoe/pcov) or Xdebug, then run:
+
+```bash
+composer test-coverage
+```
+
+On GitHub Actions, the `run-tests` workflow runs the matrix with `--no-coverage` and includes a **coverage** job (PHP 8.5 + PCOV) that writes Clover output and uploads it as a workflow artifact.
+
 ## Changelog
 
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
 
 ## Contributing
 
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+Open a pull request or issue on [GitHub](https://github.com/codebar-ag/laravel-m-files). Please run `composer test` and `composer analyse` before submitting.
 
 ## Security
+
+Operational notes on caching and credentials are described under [Cache and production security](#cache-and-production-security).
 
 If you discover any security related issues, please email security@codebar.ch instead of using the issue tracker.
 

@@ -14,15 +14,15 @@ jobs:
       max-parallel: 1
       matrix:
         os: [ ubuntu-latest ]
-        php: [ 8.4 ]
-        laravel: [ 12.* ]
+        php: [ 8.3, 8.5 ]
+        laravel: [ 13.* ]
         stability: [ prefer-lowest, prefer-stable ]
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -45,7 +45,7 @@ jobs:
         run: cp phpunit.xml.dist phpunit.xml
 
       - name: Execute tests
-        run: vendor/bin/pest
+        run: vendor/bin/pest --no-coverage
         env:
           M_FILES_URL: ${{ secrets.M_FILES_URL }}
           M_FILES_USERNAME: ${{ secrets.M_FILES_USERNAME }}
@@ -55,7 +55,45 @@ jobs:
 
       - name: Store Log Artifacts
         if: failure()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: Store report artifacts
           path: ./vendor/orchestra/testbench-core/laravel/storage/logs
+
+  coverage:
+    runs-on: ubuntu-latest
+    name: coverage (PHP 8.5)
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.5
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo, pcov
+          coverage: pcov
+
+      - name: Install dependencies
+        run: |
+          composer require "laravel/framework:13.*" --no-interaction --no-update
+          composer update --prefer-stable --prefer-dist --no-interaction
+
+      - name: Run tests with coverage
+        run: |
+          mkdir -p build/logs
+          cp phpunit.xml.dist phpunit.xml
+          vendor/bin/pest --coverage --coverage-clover build/logs/clover.xml
+        env:
+          M_FILES_URL: ${{ secrets.M_FILES_URL }}
+          M_FILES_USERNAME: ${{ secrets.M_FILES_USERNAME }}
+          M_FILES_PASSWORD: ${{ secrets.M_FILES_PASSWORD }}
+          M_FILES_VAULT_GUID: ${{ secrets.M_FILES_VAULT_GUID }}
+          M_FILES_CACHE_DRIVER: ${{ secrets.M_FILES_CACHE_DRIVER }}
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: coverage-clover
+          path: build/logs/clover.xml
