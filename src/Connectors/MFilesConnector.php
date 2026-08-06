@@ -12,6 +12,7 @@ use Saloon\Exceptions\Request\FatalRequestException;
 use Saloon\Exceptions\Request\RequestException;
 use Saloon\Http\Connector;
 use Saloon\Http\Request;
+use Saloon\Http\Response;
 use Saloon\Traits\Plugins\AcceptsJson;
 use Saloon\Traits\Plugins\HasTimeout;
 
@@ -55,6 +56,18 @@ class MFilesConnector extends Connector
         // exhausted. Returning the last response instead keeps the failure flowing
         // through the response classes, so callers still catch MFilesErrorException.
         $this->throwOnMaxTries = false;
+
+        // Invalidating on the response — rather than only in handleRetry() — means a
+        // stale token is dropped even when retries are disabled (tries=1), where
+        // handleRetry() is never reached. The next request then re-authenticates.
+        $this->middleware()->onResponse(
+            function (Response $response): void {
+                if ($response->status() === 401) {
+                    $this->forgetToken();
+                }
+            },
+            'm-files-invalidate-stale-token',
+        );
     }
 
     public function resolveBaseUrl(): string
@@ -92,12 +105,11 @@ class MFilesConnector extends Connector
 
         // The cached token outlives its server-side session whenever the vault
         // restarts or expires it early, and nothing invalidated our copy — so every
-        // request 401'd until the TTL lapsed. Drop it and let the next attempt
-        // re-authenticate. Genuinely bad credentials fail fast instead, because the
-        // login request throws MFilesErrorException outside this retry loop.
+        // request 401'd until the TTL lapsed. The response middleware has already
+        // dropped it by this point, so the replayed attempt re-authenticates.
+        // Genuinely bad credentials fail fast instead, because the login request
+        // throws MFilesErrorException outside this retry loop.
         if ($status === 401) {
-            $this->resolveCacheKeyManager()->removeAuthToken();
-
             return true;
         }
 
@@ -130,6 +142,22 @@ class MFilesConnector extends Connector
                 return $response->dto();
             }
         );
+    }
+
+    /**
+     * Drop the cached token and force the next request to fetch a new one.
+     *
+     * Clearing the cache alone is not enough. Saloon memoises the connector's header
+     * store (`$this->headers ??= new ArrayStore($this->defaultHeaders())`), so
+     * defaultHeaders() — and with it getToken() — runs only once per connector
+     * instance. Without unsetting it, the replayed attempt would go out carrying the
+     * very token the vault had just rejected.
+     */
+    public function forgetToken(): void
+    {
+        $this->resolveCacheKeyManager()->removeAuthToken();
+
+        unset($this->headers);
     }
 
     protected function resolveCacheKeyManager(): CacheKeyManager

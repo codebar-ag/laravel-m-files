@@ -52,11 +52,23 @@ function mFilesSend(
 ): Response {
     $request ??= new GetObjectInformationRequest(objectType: 0, objectId: 1, objectVersion: 1);
 
-    $responses = is_array($mock) ? $mock : [$mock];
+    $responses = is_array($mock) ? array_values($mock) : [$mock];
+
+    // Saloon has no array-sequence support under a class key — MockClient::addResponse()
+    // only accepts MockResponse|Fixture|callable — so a multi-response sequence is
+    // expressed as a callable that walks the list, repeating the last entry once the
+    // attempts outrun it.
+    $sequence = count($responses) === 1
+        ? $responses[0]
+        : (function () use ($responses): MockResponse {
+            static $index = 0;
+
+            return $responses[min($index++, count($responses) - 1)];
+        });
 
     Saloon::fake([
         LogInToVaultRequest::class => MockResponse::make(['Value' => 'fake-token'], 200),
-        $request::class => count($responses) === 1 ? $responses[0] : $responses,
+        $request::class => $sequence,
     ]);
 
     return ($connector ?? new MFilesConnector(mFilesConfig($tries)))->send($request);

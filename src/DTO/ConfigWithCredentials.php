@@ -57,12 +57,15 @@ class ConfigWithCredentials
                 'tokenTtlSeconds',
                 (int) config('m-files.auth.expiration', 3600),
             ),
-            connectTimeout: self::optionalPositiveInt(
+            // Zero is meaningful for these three — "no timeout" and "no backoff" — so
+            // they must not be floored at 1 the way tokenTtlSeconds and tries are.
+            // Flooring them here also broke fromArray(toArray()) round-tripping.
+            connectTimeout: self::optionalNonNegativeInt(
                 $data,
                 'connectTimeout',
                 (int) config('m-files.http.connect_timeout', self::DEFAULT_CONNECT_TIMEOUT),
             ),
-            requestTimeout: self::optionalPositiveInt(
+            requestTimeout: self::optionalNonNegativeInt(
                 $data,
                 'requestTimeout',
                 (int) config('m-files.http.timeout', self::DEFAULT_REQUEST_TIMEOUT),
@@ -72,7 +75,7 @@ class ConfigWithCredentials
                 'tries',
                 (int) config('m-files.http.tries', self::DEFAULT_TRIES),
             ),
-            retryIntervalMilliseconds: self::optionalPositiveInt(
+            retryIntervalMilliseconds: self::optionalNonNegativeInt(
                 $data,
                 'retryIntervalMilliseconds',
                 (int) config('m-files.http.retry_interval', self::DEFAULT_RETRY_INTERVAL_MILLISECONDS),
@@ -151,6 +154,28 @@ class ConfigWithCredentials
         }
 
         return $value;
+    }
+
+    /**
+     * Like optionalPositiveInt(), but keeps a meaningful zero.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    private static function optionalNonNegativeInt(array $data, string $key, int $default): int
+    {
+        $value = Arr::get($data, $key);
+
+        if ($value === null) {
+            return max(0, $default);
+        }
+
+        $int = match (true) {
+            is_int($value) => $value,
+            is_string($value) && ctype_digit($value) => (int) $value,
+            default => throw new InvalidArgumentException("Config [{$key}] must be a non-negative integer."),
+        };
+
+        return max(0, $int);
     }
 
     /**
