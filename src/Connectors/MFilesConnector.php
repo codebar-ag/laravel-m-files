@@ -150,14 +150,16 @@ class MFilesConnector extends Connector
      * Clearing the cache alone is not enough. Saloon memoises the connector's header
      * store (`$this->headers ??= new ArrayStore($this->defaultHeaders())`), so
      * defaultHeaders() — and with it getToken() — runs only once per connector
-     * instance. Without unsetting it, the replayed attempt would go out carrying the
-     * very token the vault had just rejected.
+     * instance; the replayed attempt would otherwise go out carrying the very token
+     * the vault had just rejected. Re-seeding the store keeps defaultHeaders() intact
+     * as a public contract, and getToken() re-authenticates because the cache entry
+     * has just been dropped.
      */
     public function forgetToken(): void
     {
         $this->resolveCacheKeyManager()->removeAuthToken();
 
-        unset($this->headers);
+        $this->headers()->add('X-Authentication', $this->getToken());
     }
 
     protected function resolveCacheKeyManager(): CacheKeyManager

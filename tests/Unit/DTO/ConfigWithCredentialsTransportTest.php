@@ -179,10 +179,10 @@ describe('fromArray and the Laravel config', function () {
         transportConfig(['tries' => 'many']);
     })->throws(InvalidArgumentException::class, 'Config [tries] must be a positive integer.')->group('dto');
 
-    test('fromArray floors the transport values at 1, not at 0 like the constructor', function () {
-        // optionalPositiveInt() applies max(1, …) to every field, so fromArray cannot
-        // express the "0 = no limit / no wait" values the constructor accepts. Worth
-        // knowing before assuming M_FILES_RETRY_INTERVAL_MS=0 disables the backoff.
+    test('fromArray preserves a meaningful zero and only floors tries at 1', function () {
+        // Zero means "no limit" for the timeouts and "no wait" for the backoff, so
+        // fromArray must be able to express it — flooring these at 1 also broke
+        // fromArray(toArray()) round-tripping. Only tries has no sensible zero.
         $dto = transportConfig([
             'connectTimeout' => 0,
             'requestTimeout' => 0,
@@ -190,10 +190,16 @@ describe('fromArray and the Laravel config', function () {
             'retryIntervalMilliseconds' => 0,
         ]);
 
-        expect($dto->connectTimeout)->toBe(1)
-            ->and($dto->requestTimeout)->toBe(1)
+        expect($dto->connectTimeout)->toBe(0)
+            ->and($dto->requestTimeout)->toBe(0)
             ->and($dto->tries)->toBe(1)
-            ->and($dto->retryIntervalMilliseconds)->toBe(1);
+            ->and($dto->retryIntervalMilliseconds)->toBe(0);
+    })->group('dto');
+
+    test('a config built with zero timeouts round-trips through toArray', function () {
+        $dto = transportDto(connectTimeout: 0, requestTimeout: 0, tries: 2, retryIntervalMilliseconds: 0);
+
+        expect(ConfigWithCredentials::fromArray($dto->toArray())->toArray())->toBe($dto->toArray());
     })->group('dto');
 });
 

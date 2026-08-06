@@ -186,14 +186,14 @@ describe('stale token recovery', function () {
         );
 
         expect($response->status())->toBe(200)
-            // The dead token no longer poisons the cache for the rest of its TTL.
-            ->and($cacheKeyManager->hasAuthToken())->toBeFalse()
-            ->and($cacheKeyManager->getAuthToken())->toBeNull()
+            // The dead token no longer poisons the cache for the rest of its TTL — it
+            // has been replaced by the one the replay's re-authentication issued.
+            ->and($cacheKeyManager->getAuthToken())->toBe('fake-token')
             // Two object requests: the 401 and its replay.
             ->and(resilienceSentCount(GetObjectInformationRequest::class))->toBe(2);
     })->group('connectors');
 
-    test('the invalidated token forces a real re-authentication on the next connector', function () {
+    test('the invalidation re-authenticates within the same send and caches the new token', function () {
         $config = mFilesConfig(tries: 2);
         $cacheKeyManager = new CacheKeyManager($config);
         $cacheKeyManager->setAuthToken('stale-token', 3600);
@@ -204,10 +204,12 @@ describe('stale token recovery', function () {
             connector: new MFilesConnector($config, $cacheKeyManager),
         );
 
-        // The seeded token meant no login had been needed up to this point, so any
-        // login recorded from here on can only come from the invalidation.
-        expect(resilienceSentCount(LogInToVaultRequest::class))->toBe(0);
+        // The seeded token meant no login was needed for the first attempt, so this
+        // login can only come from the 401 invalidation — recovery happens inside the
+        // failing send, not merely on some later one.
+        expect(resilienceSentCount(LogInToVaultRequest::class))->toBe(1);
 
+        // A subsequent connector reuses the refreshed token rather than logging in again.
         $second = (new MFilesConnector($config, $cacheKeyManager))->send(resilienceGet());
 
         expect(resilienceSentCount(LogInToVaultRequest::class))->toBe(1)
@@ -215,18 +217,13 @@ describe('stale token recovery', function () {
             ->and($cacheKeyManager->getAuthToken())->toBe('fake-token');
     })->group('connectors');
 
-    test('KNOWN GAP: the replayed attempt still carries the token the vault rejected', function () {
+    test('the replayed attempt carries the freshly issued token, not the rejected one', function () {
         // Saloon's HasHeaders trait memoises the connector's header store
         // (`$this->headers ??= new ArrayStore($this->defaultHeaders())`), so
-        // MFilesConnector::defaultHeaders() — and with it getToken() — runs exactly once
-        // per connector instance. Forgetting the cached token inside handleRetry()
-        // therefore cannot influence the replay: the retried attempt goes out with the
-        // very token that just produced the 401, and the recovery only takes effect on
-        // the NEXT connector instance.
-        //
-        // This pins today's behaviour rather than the behaviour the connector's own
-        // comment promises. Change the expectation to ['stale-token', 'fake-token']
-        // once the token is resolved per attempt instead of per connector.
+        // MFilesConnector::defaultHeaders() — and with it getToken() — would otherwise
+        // run exactly once per connector instance and the replay would reuse the very
+        // token that produced the 401. forgetToken() unsets that memoised store, which
+        // is what makes recovery effective inside the same send.
         $config = mFilesConfig(tries: 2);
         $cacheKeyManager = new CacheKeyManager($config);
         $cacheKeyManager->setAuthToken('stale-token', 3600);
@@ -243,7 +240,7 @@ describe('stale token recovery', function () {
             ->values()
             ->all();
 
-        expect($tokens)->toBe(['stale-token', 'stale-token']);
+        expect($tokens)->toBe(['stale-token', 'fake-token']);
     })->group('connectors');
 
     test('a 401 that never recovers still surfaces MFilesErrorException', function () {
