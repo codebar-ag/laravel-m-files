@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use CodebarAg\MFiles\DTO\MFilesError;
+use Illuminate\Support\Arr;
 
 it('creates instance with all properties', function () {
     $error = new MFilesError(
@@ -137,5 +138,5 @@ it('converts instance to array with null stack', function () {
 
     $array = $error->toArray();
 
-    expect($array['stack'])->toBeNull();
+    expect(Arr::get($array, 'stack'))->toBeNull();
 });

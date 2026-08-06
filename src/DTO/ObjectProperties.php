@@ -10,6 +10,10 @@ use Illuminate\Support\Collection;
 
 final class ObjectProperties
 {
+    /**
+     * @param  Collection<int, GetProperty>  $properties
+     * @param  Collection<int, File>  $files
+     */
     public function __construct(
         public readonly int $classId,
         public readonly int $objectId,
@@ -20,11 +24,24 @@ final class ObjectProperties
         public readonly Collection $files,
     ) {}
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public static function fromArray(array $data): self
     {
         $lastModifiedAt = Arr::get($data, 'ObjVer.Modified');
-        $properties = Arr::get($data, 'Properties', []);
-        $files = Arr::get($data, 'Files', []);
+        $propertiesRaw = Arr::get($data, 'Properties', []);
+        $filesRaw = Arr::get($data, 'Files', []);
+        if (! is_array($propertiesRaw)) {
+            $propertiesRaw = [];
+        }
+        if (! is_array($filesRaw)) {
+            $filesRaw = [];
+        }
+        /** @var list<array<string, mixed>> $propertyList */
+        $propertyList = array_values($propertiesRaw);
+        /** @var list<array<string, mixed>> $fileList */
+        $fileList = array_values($filesRaw);
 
         return new self(
             classId: Arr::get($data, 'Class'),
@@ -32,11 +49,14 @@ final class ObjectProperties
             objectTypeId: Arr::get($data, 'ObjVer.Type'),
             objectVersionId: Arr::get($data, 'ObjVer.Version'),
             lastModifiedAt: CarbonImmutable::parse($lastModifiedAt),
-            properties: collect($properties)->map(fn (array $property) => GetProperty::fromArray($property)),
-            files: collect($files)->map(fn (array $file) => File::fromArray($file)),
+            properties: collect($propertyList)->map(fn (array $property) => GetProperty::fromArray($property)),
+            files: collect($fileList)->map(fn (array $file) => File::fromArray($file)),
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return [

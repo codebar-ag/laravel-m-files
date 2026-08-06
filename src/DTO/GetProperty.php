@@ -16,6 +16,9 @@ final class GetProperty
         public readonly mixed $displayValue,
     ) {}
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public static function fromArray(array $data): self
     {
         $dataTypeValue = Arr::get($data, 'Value.DataType');
@@ -49,6 +52,9 @@ final class GetProperty
         };
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return [

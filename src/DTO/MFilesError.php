@@ -18,6 +18,9 @@ final class MFilesError
         public readonly ?string $stack,
     ) {}
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public static function fromArray(array $data): self
     {
         $exceptionData = Arr::get($data, 'Exception', []);
@@ -33,6 +36,9 @@ final class MFilesError
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return [

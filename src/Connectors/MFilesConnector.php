@@ -15,7 +15,8 @@ class MFilesConnector extends Connector
     use AcceptsJson;
 
     public function __construct(
-        public ConfigWithCredentials $configuration
+        public ConfigWithCredentials $configuration,
+        protected ?CacheKeyManager $cacheKeyManager = null,
     ) {}
 
     public function resolveBaseUrl(): string
@@ -34,18 +35,24 @@ class MFilesConnector extends Connector
 
     public function getToken(): ?string
     {
-        $cacheManager = new CacheKeyManager($this->configuration);
+        return $this->resolveCacheKeyManager()->rememberAuthToken(
+            $this->configuration->tokenTtlSeconds,
+            function () {
+                $request = new LogInToVaultRequest(
+                    url: $this->configuration->url,
+                    vaultGuid: $this->configuration->vaultGuid,
+                    username: $this->configuration->username,
+                    password: $this->configuration->password,
+                );
+                $response = $request->send();
 
-        return $cacheManager->rememberAuthToken(1, function () {
-            $request = new LogInToVaultRequest(
-                url: $this->configuration->url,
-                vaultGuid: $this->configuration->vaultGuid,
-                username: $this->configuration->username,
-                password: $this->configuration->password,
-            );
-            $response = $request->send();
+                return $response->dto();
+            }
+        );
+    }
 
-            return $response->dto();
-        });
+    protected function resolveCacheKeyManager(): CacheKeyManager
+    {
+        return $this->cacheKeyManager ?? new CacheKeyManager($this->configuration);
     }
 }

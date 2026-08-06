@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CodebarAg\MFiles\DTO;
 
 use CodebarAg\MFiles\Enums\MFDataTypeEnum;
+use Illuminate\Support\Collection;
 
 final class SetProperty
 {
@@ -25,6 +26,9 @@ final class SetProperty
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return match ($this->dataType) {
@@ -56,7 +60,13 @@ final class SetProperty
                 'PropertyDef' => $this->propertyDef,
                 'TypedValue' => [
                     'DataType' => 10,
-                    'Lookups' => collect($this->value)->map(fn (mixed $item) => [
+                    'Lookups' => collect(
+                        match (true) {
+                            is_array($this->value) => array_values($this->value),
+                            $this->value instanceof Collection => $this->value->all(),
+                            default => [$this->value],
+                        }
+                    )->map(fn (mixed $item) => [
                         'Item' => filled($item) ? (int) $item : null,
                         'Version' => -1,
                     ])->values()->all(),

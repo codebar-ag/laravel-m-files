@@ -3,6 +3,7 @@
 namespace CodebarAg\MFiles\Tests;
 
 use CodebarAg\MFiles\MFilesServiceProvider;
+use Illuminate\Support\Arr;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Saloon\Laravel\SaloonServiceProvider;
 
@@ -23,8 +24,8 @@ class TestCase extends Orchestra
 
     public function getEnvironmentSetUp($app): void
     {
-        $app['config']->set('database.default', 'sqlite');
-        $app['config']->set('database.connections.sqlite', [
+        Arr::get($app, 'config')->set('database.default', 'sqlite');
+        Arr::get($app, 'config')->set('database.connections.sqlite', [
             'driver' => 'sqlite',
             'database' => ':memory:',
             'prefix' => '',

@@ -28,6 +28,9 @@ class UploadFileRequest extends Request implements HasBody
         return '/files';
     }
 
+    /**
+     * @return array<string, MultipartValue>
+     */
     protected function defaultBody(): array
     {
         return [
@@ -39,6 +42,9 @@ class UploadFileRequest extends Request implements HasBody
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function createDtoFromResponse(Response $response): array
     {
         return UploadFileResponse::createDtoFromResponse($response, $this->fileName);

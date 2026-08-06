@@ -39,6 +39,9 @@ class LogInToVaultRequest extends SoloRequest implements HasBody
         ];
     }
 
+    /**
+     * @return array<string, string>
+     */
     protected function defaultBody(): array
     {
         return [
