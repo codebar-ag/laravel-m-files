@@ -9,6 +9,19 @@ use InvalidArgumentException;
 
 class ConfigWithCredentials
 {
+    public const DEFAULT_CONNECT_TIMEOUT = 10;
+
+    public const DEFAULT_REQUEST_TIMEOUT = 60;
+
+    public const DEFAULT_TRIES = 3;
+
+    public const DEFAULT_RETRY_INTERVAL_MILLISECONDS = 500;
+
+    /**
+     * The transport settings are appended after the existing parameters so positional
+     * construction keeps working. Guzzle defaults both timeouts to "wait forever",
+     * which lets a single unresponsive vault pin a PHP worker indefinitely.
+     */
     public function __construct(
         public string $url,
         public string $vaultGuid,
@@ -16,8 +29,16 @@ class ConfigWithCredentials
         public string $password,
         public ?string $cacheDriver = null,
         public int $tokenTtlSeconds = 3600,
+        public int $connectTimeout = self::DEFAULT_CONNECT_TIMEOUT,
+        public int $requestTimeout = self::DEFAULT_REQUEST_TIMEOUT,
+        public int $tries = self::DEFAULT_TRIES,
+        public int $retryIntervalMilliseconds = self::DEFAULT_RETRY_INTERVAL_MILLISECONDS,
     ) {
         $this->tokenTtlSeconds = max(1, $this->tokenTtlSeconds);
+        $this->connectTimeout = max(0, $this->connectTimeout);
+        $this->requestTimeout = max(0, $this->requestTimeout);
+        $this->tries = max(1, $this->tries);
+        $this->retryIntervalMilliseconds = max(0, $this->retryIntervalMilliseconds);
     }
 
     /**
@@ -36,6 +57,29 @@ class ConfigWithCredentials
                 'tokenTtlSeconds',
                 (int) config('m-files.auth.expiration', 3600),
             ),
+            // Zero is meaningful for these three — "no timeout" and "no backoff" — so
+            // they must not be floored at 1 the way tokenTtlSeconds and tries are.
+            // Flooring them here also broke fromArray(toArray()) round-tripping.
+            connectTimeout: self::optionalNonNegativeInt(
+                $data,
+                'connectTimeout',
+                (int) config('m-files.http.connect_timeout', self::DEFAULT_CONNECT_TIMEOUT),
+            ),
+            requestTimeout: self::optionalNonNegativeInt(
+                $data,
+                'requestTimeout',
+                (int) config('m-files.http.timeout', self::DEFAULT_REQUEST_TIMEOUT),
+            ),
+            tries: self::optionalPositiveInt(
+                $data,
+                'tries',
+                (int) config('m-files.http.tries', self::DEFAULT_TRIES),
+            ),
+            retryIntervalMilliseconds: self::optionalNonNegativeInt(
+                $data,
+                'retryIntervalMilliseconds',
+                (int) config('m-files.http.retry_interval', self::DEFAULT_RETRY_INTERVAL_MILLISECONDS),
+            ),
         );
     }
 
@@ -51,7 +95,25 @@ class ConfigWithCredentials
             'password' => $this->password,
             'cacheDriver' => $this->cacheDriver,
             'tokenTtlSeconds' => $this->tokenTtlSeconds,
+            'connectTimeout' => $this->connectTimeout,
+            'requestTimeout' => $this->requestTimeout,
+            'tries' => $this->tries,
+            'retryIntervalMilliseconds' => $this->retryIntervalMilliseconds,
         ];
+    }
+
+    /**
+     * Keep the vault password out of dumps and stack traces.
+     *
+     * `dd()`, `var_dump()`, Ray and most exception renderers walk public properties,
+     * so an unhandled error anywhere near this DTO used to print the credential.
+     * toArray() intentionally still returns it so fromArray(toArray()) round-trips.
+     *
+     * @return array<string, mixed>
+     */
+    public function __debugInfo(): array
+    {
+        return [...$this->toArray(), 'password' => '********'];
     }
 
     /**
@@ -92,6 +154,28 @@ class ConfigWithCredentials
         }
 
         return $value;
+    }
+
+    /**
+     * Like optionalPositiveInt(), but keeps a meaningful zero.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    private static function optionalNonNegativeInt(array $data, string $key, int $default): int
+    {
+        $value = Arr::get($data, $key);
+
+        if ($value === null) {
+            return max(0, $default);
+        }
+
+        $int = match (true) {
+            is_int($value) => $value,
+            is_string($value) && ctype_digit($value) => (int) $value,
+            default => throw new InvalidArgumentException("Config [{$key}] must be a non-negative integer."),
+        };
+
+        return max(0, $int);
     }
 
     /**
