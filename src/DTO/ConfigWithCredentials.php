@@ -9,6 +9,19 @@ use InvalidArgumentException;
 
 class ConfigWithCredentials
 {
+    public const DEFAULT_CONNECT_TIMEOUT = 10;
+
+    public const DEFAULT_REQUEST_TIMEOUT = 60;
+
+    public const DEFAULT_TRIES = 3;
+
+    public const DEFAULT_RETRY_INTERVAL_MILLISECONDS = 500;
+
+    /**
+     * The transport settings are appended after the existing parameters so positional
+     * construction keeps working. Guzzle defaults both timeouts to "wait forever",
+     * which lets a single unresponsive vault pin a PHP worker indefinitely.
+     */
     public function __construct(
         public string $url,
         public string $vaultGuid,
@@ -16,8 +29,16 @@ class ConfigWithCredentials
         public string $password,
         public ?string $cacheDriver = null,
         public int $tokenTtlSeconds = 3600,
+        public int $connectTimeout = self::DEFAULT_CONNECT_TIMEOUT,
+        public int $requestTimeout = self::DEFAULT_REQUEST_TIMEOUT,
+        public int $tries = self::DEFAULT_TRIES,
+        public int $retryIntervalMilliseconds = self::DEFAULT_RETRY_INTERVAL_MILLISECONDS,
     ) {
         $this->tokenTtlSeconds = max(1, $this->tokenTtlSeconds);
+        $this->connectTimeout = max(0, $this->connectTimeout);
+        $this->requestTimeout = max(0, $this->requestTimeout);
+        $this->tries = max(1, $this->tries);
+        $this->retryIntervalMilliseconds = max(0, $this->retryIntervalMilliseconds);
     }
 
     /**
@@ -36,6 +57,26 @@ class ConfigWithCredentials
                 'tokenTtlSeconds',
                 (int) config('m-files.auth.expiration', 3600),
             ),
+            connectTimeout: self::optionalPositiveInt(
+                $data,
+                'connectTimeout',
+                (int) config('m-files.http.connect_timeout', self::DEFAULT_CONNECT_TIMEOUT),
+            ),
+            requestTimeout: self::optionalPositiveInt(
+                $data,
+                'requestTimeout',
+                (int) config('m-files.http.timeout', self::DEFAULT_REQUEST_TIMEOUT),
+            ),
+            tries: self::optionalPositiveInt(
+                $data,
+                'tries',
+                (int) config('m-files.http.tries', self::DEFAULT_TRIES),
+            ),
+            retryIntervalMilliseconds: self::optionalPositiveInt(
+                $data,
+                'retryIntervalMilliseconds',
+                (int) config('m-files.http.retry_interval', self::DEFAULT_RETRY_INTERVAL_MILLISECONDS),
+            ),
         );
     }
 
@@ -51,7 +92,25 @@ class ConfigWithCredentials
             'password' => $this->password,
             'cacheDriver' => $this->cacheDriver,
             'tokenTtlSeconds' => $this->tokenTtlSeconds,
+            'connectTimeout' => $this->connectTimeout,
+            'requestTimeout' => $this->requestTimeout,
+            'tries' => $this->tries,
+            'retryIntervalMilliseconds' => $this->retryIntervalMilliseconds,
         ];
+    }
+
+    /**
+     * Keep the vault password out of dumps and stack traces.
+     *
+     * `dd()`, `var_dump()`, Ray and most exception renderers walk public properties,
+     * so an unhandled error anywhere near this DTO used to print the credential.
+     * toArray() intentionally still returns it so fromArray(toArray()) round-trips.
+     *
+     * @return array<string, mixed>
+     */
+    public function __debugInfo(): array
+    {
+        return [...$this->toArray(), 'password' => '********'];
     }
 
     /**

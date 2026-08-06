@@ -22,7 +22,8 @@ class CreateSingleFileDocumentRequest extends Request implements HasBody
     protected Method $method = Method::POST;
 
     /**
-     * @param  list<array<string, mixed>>  $files
+     * @param  array<string, mixed>|list<array<string, mixed>>  $files  A single upload-info
+     *                                                                  array, or a list of them.
      * @param  list<SetProperty>  $propertyValues
      */
     public function __construct(
@@ -46,8 +47,32 @@ class CreateSingleFileDocumentRequest extends Request implements HasBody
                 ->map(fn (SetProperty $propertyValue) => $propertyValue->toArray())
                 ->values()
                 ->toArray(),
-            'Files' => [$this->files],
+            'Files' => $this->normalisedFiles(),
         ];
+    }
+
+    /**
+     * Normalise `$files` into the list M-Files expects.
+     *
+     * The body used to wrap `$files` unconditionally in another array. That only
+     * produced valid JSON when a *single* upload-info array was passed, so the
+     * documented `files: [$uploadedFile]` form sent a nested `[[{…}]]` that M-Files
+     * rejects. Both shapes are accepted now, which also makes multi-file documents
+     * possible without changing the signature.
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function normalisedFiles(): array
+    {
+        if ($this->files === []) {
+            return [];
+        }
+
+        // An M-Files upload-info array is associative (UploadID, Title, Extension…),
+        // so a list can only be a collection of them.
+        $files = array_is_list($this->files) ? $this->files : [$this->files];
+
+        return array_values(array_filter($files, 'is_array'));
     }
 
     public function createDtoFromResponse(Response $response): ObjectProperties

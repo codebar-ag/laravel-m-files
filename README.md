@@ -47,6 +47,10 @@ M_FILES_VAULT_GUID=ABC0DE2G-3HW-QWCQ-SDF3-WERWETWETW
 M_FILES_CACHE_DRIVER=file
 M_FILES_EXPIRATION_SECONDS=3600
 # M_FILES_SESSION_ID=   # optional; exposed as config('m-files.auth.session_id') for custom use
+# M_FILES_CONNECT_TIMEOUT=10
+# M_FILES_TIMEOUT=60
+# M_FILES_TRIES=3
+# M_FILES_RETRY_INTERVAL_MS=500
 ```
 
 ### Configuration Options
@@ -60,6 +64,19 @@ The package supports the following configuration options:
 - `M_FILES_CACHE_DRIVER` - Cache driver for storing authentication tokens (defaults to `CACHE_DRIVER`, then `file`)
 - `M_FILES_EXPIRATION_SECONDS` - How long to cache the vault authentication token, in seconds (default: `3600`)
 - `M_FILES_SESSION_ID` - Optional; sets `config('m-files.auth.session_id')` (not used by the package’s built-in connector/requests; available for your own integrations)
+
+### Transport Options
+
+The `m-files.http` config block controls timeouts and retries:
+
+- `M_FILES_CONNECT_TIMEOUT` - Seconds to wait for the connection to be established (default: `10`)
+- `M_FILES_TIMEOUT` - Seconds to wait for the complete response (default: `60`)
+- `M_FILES_TRIES` - Maximum number of attempts per request (default: `3`)
+- `M_FILES_RETRY_INTERVAL_MS` - Base delay between attempts in milliseconds, grown exponentially (default: `500`)
+
+Without the timeouts Guzzle waits indefinitely, so a single unresponsive vault can pin every PHP worker in the pool.
+
+Retries are deliberately conservative — only failures that are safe to replay are retried: connection errors, `408`, `429`, `503`, and `5xx` **only on idempotent methods** (`GET`, `HEAD`, `OPTIONS`). A document-creating `POST` is never sent twice. On a `401` the cached authentication token is dropped and re-fetched automatically, which covers a vault that expired or restarted the session before the cache TTL lapsed; genuinely bad credentials still fail fast. Set `M_FILES_TRIES` to `1` to disable retries entirely.
 
 ## Authentication
 
@@ -177,7 +194,7 @@ Creates a single file document in M-Files.
 
 **Constructor Parameters:**
 - `title` (string) - Document title
-- `files` (array) - Array of uploaded file information
+- `files` (array) - A single uploaded file information array, **or** a list of them
 - `propertyValues` (array) - Array of SetProperty objects for custom properties
 
 **Request:**
@@ -189,6 +206,15 @@ use CodebarAg\MFiles\Enums\MFDataTypeEnum;
 $request = new CreateSingleFileDocumentRequest(
     title: 'My Document',
     files: [$uploadedFile]
+);
+```
+
+Both shapes are accepted for `files`: a single upload-info array (`files: $uploadedFile`) and a list of them (`files: [$uploadedFile]`). Passing several entries creates a multi-file document:
+
+```php
+$request = new CreateSingleFileDocumentRequest(
+    title: 'My Document',
+    files: [$firstUploadedFile, $secondUploadedFile]
 );
 ```
 
@@ -309,6 +335,25 @@ use CodebarAg\MFiles\DTO\ObjectProperties;
 
 $objectProperties = $connector->send($request)->dto();
 // Returns ObjectProperties DTO with updated object information
+```
+
+## Error Handling
+
+Every failure surfaces as a single exception, `CodebarAg\MFiles\Exceptions\MFilesErrorException` — including responses that are not JSON at all (an HTML error page from a reverse proxy or gateway, which previously escaped as a `JsonException`).
+
+```php
+use CodebarAg\MFiles\Exceptions\MFilesErrorException;
+
+try {
+    $document = $connector->send($request)->dto();
+} catch (MFilesErrorException $e) {
+    $e->getMessage();               // The message exactly as M-Files reported it
+    $e->status();                   // HTTP status, or 0 when it could not be determined
+    $e->errorCode();                // M-Files error code, or null when the payload carried none
+    $e->isAuthenticationFailure();  // true for 401 / 403
+    $e->context();                  // Single-line summary for logs: status, exception name, code, method and URL
+    $e->error;                      // The underlying MFilesError DTO (errorCode, status, url, method, exceptionName, exceptionMessage, stack)
+}
 ```
 
 ## DTOs
