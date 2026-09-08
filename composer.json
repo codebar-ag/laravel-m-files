@@ -25,7 +25,7 @@
         "illuminate/contracts": "^13.0",
         "illuminate/support": "^13.0",
         "saloonphp/cache-plugin": "^3.1",
-        "saloonphp/laravel-plugin": "^4.0",
+        "saloonphp/laravel-plugin": "^5.0",
         "saloonphp/saloon": "^4.0",
         "spatie/laravel-package-tools": "^1.19.0"
     },
