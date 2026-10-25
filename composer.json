@@ -56,7 +56,7 @@
         "analyse": "vendor/bin/phpstan analyse",
         "larastan": "vendor/bin/phpstan analyse",
         "test": "vendor/bin/pest --no-coverage",
-        "test-coverage": "vendor/bin/pest --coverage",
+        "test-coverage": "vendor/bin/pest --coverage --coverage-html build/coverage --coverage-text=build/coverage.txt --coverage-clover build/logs/clover.xml",
         "format": "vendor/bin/pint"
     },
     "config": {
