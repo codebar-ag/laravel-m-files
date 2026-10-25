@@ -39,7 +39,9 @@ class LogInToVaultRequest extends SoloRequest implements HasBody
 
     public function resolveEndpoint(): string
     {
-        return $this->url.'/REST/server/authenticationtokens';
+        // Trimmed the same way MFilesConnector::resolveBaseUrl() does, so a configured
+        // URL with a trailing slash does not produce "//REST" on the login call only.
+        return rtrim($this->url, '/').'/REST/server/authenticationtokens';
     }
 
     protected function defaultHeaders(): array

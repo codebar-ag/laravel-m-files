@@ -32,3 +32,18 @@ test('can login to vault and get authentication token with caching', function ()
     expect($token)->toContain('cTLaCmVUEnLy23IYT-NyZGRtzEvSOOANbJWkHH2G39Zep0wsjfm9ieBtz3M02bcPraJhXVapSm-SPJ5hPP7pcLg44jS1oTgPajc9uDcPtDqDTO4aqdK5Rddw8-VSUISptQwp-f2o8NcIwgfrJGGbXMNOR15uKJtm_Shzb86FwKAR41Nc1hLCJfcQaNxIEwSNhnl--2GDORGgRmhYxFXiMnO0D_BO_gVeBDoONORngMgno24aE5egN7Gp-qJ5ln2yNh4dCfWx5A6Oq8HJQq463Bdhy1OLpuTZ1oLqemE3llVm-WjIB4P-5W4mqwmuzaHbQ152FNtgtAtZVgOz_P1mTw');
 
 })->group('authentication', 'log-in-to-vault');
+
+test('builds the login endpoint without a double slash when the url has a trailing slash', function (string $url) {
+    $request = new LogInToVaultRequest(
+        url: $url,
+        vaultGuid: 'vault-guid',
+        username: 'tester',
+        password: 'secret',
+    );
+
+    expect($request->resolveEndpoint())->toBe('https://vault.test/REST/server/authenticationtokens');
+})->with([
+    'without trailing slash' => 'https://vault.test',
+    'with trailing slash' => 'https://vault.test/',
+    'with several trailing slashes' => 'https://vault.test//',
+])->group('authentication', 'log-in-to-vault');
