@@ -52,7 +52,7 @@ function mFilesSend(
 ): Response {
     $request ??= new GetObjectInformationRequest(objectType: 0, objectId: 1, objectVersion: 1);
 
-    $responses = is_array($mock) ? array_values($mock) : [$mock];
+    $responses = is_array($mock) ? $mock : [$mock];
 
     // Saloon has no array-sequence support under a class key — MockClient::addResponse()
     // only accepts MockResponse|Fixture|callable — so a multi-response sequence is
